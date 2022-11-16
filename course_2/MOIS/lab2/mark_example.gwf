@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GWF version="2.0">
+    <staticSector>
+        <pair type="pair/const/-/perm/orient" idtf="" shapeColor="193" id="2731999049408" parent="0" id_b="2731947324112" id_e="2731947324736" b_x="450" b_y="301" e_x="185" e_y="309" dotBBalance="0" dotEBalance="0">
+            <points/>
+        </pair>
+        <node type="node/const/perm/general" idtf="BMW" shapeColor="0" id="2731947324736" parent="0" left="0" top="0" right="52" bottom="28" textColor="164" text_angle="0" text_font="Times New Roman [Arial]" font_size="10" x="185" y="309" haveBus="false" idtf_pos="1">
+            <content type="0" mime_type="" content_visibility="false" file_name=""/>
+        </node>
+        <node type="node/const/perm/relation" idtf="марка*" shapeColor="0" id="2731947319328" parent="0" left="0" top="0" right="64" bottom="28" textColor="164" text_angle="0" text_font="Times New Roman [Arial]" font_size="10" x="338" y="140" haveBus="false" idtf_pos="3">
+            <content type="0" mime_type="" content_visibility="false" file_name=""/>
+        </node>
+        <node type="node/const/perm/general" idtf="" shapeColor="0" id="2731947324112" parent="0" x="450" y="301" haveBus="false" idtf_pos="0">
+            <content type="0" mime_type="" content_visibility="false" file_name=""/>
+        </node>
+        <node type="node/const/perm/group" idtf="автомобиль" shapeColor="0" id="2731947320992" parent="0" left="0" top="0" right="115" bottom="28" textColor="164" text_angle="0" text_font="Times New Roman [Arial]" font_size="10" x="529" y="371" haveBus="false" idtf_pos="0">
+            <content type="0" mime_type="" content_visibility="false" file_name=""/>
+        </node>
+        <pair type="pair/const/pos/perm/orient/membership" idtf="" shapeColor="0" id="2731999049648" parent="0" id_b="2731947319328" id_e="2731999049408" b_x="338" b_y="140" e_x="0" e_y="0" dotBBalance="0" dotEBalance="0.60126">
+            <points/>
+        </pair>
+        <pair type="pair/const/pos/perm/orient/membership" idtf="" shapeColor="0" id="2731995734144" parent="0" id_b="2731947320992" id_e="2731947324112" b_x="529" b_y="371" e_x="450" e_y="301" dotBBalance="0" dotEBalance="0">
+            <points/>
+        </pair>
+    </staticSector>
+</GWF>
