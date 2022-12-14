@@ -13,6 +13,8 @@
 #include <map>
 #include <vector>
 
+#include <algorithm>
+
 using namespace std;
 using namespace utils;
 
@@ -25,44 +27,52 @@ namespace exampleModule
     vector<ScAddr> get_adjacted_nodes(unique_ptr<ScMemoryContext>& ms_context, ScAddr current_node, ScLog* logger)
     {
         vector <ScAddr> adjacted_nodes = {};
-        int vector_size = 0;
+
         ScIterator3Ptr adjacted_nodes_iterator = ms_context->Iterator3(current_node, ScType::EdgeDCommonConst, ScType::NodeConst);
         while (adjacted_nodes_iterator->Next())
         {
-            adjacted_nodes.push_back(adjacted_nodes_iterator->Get(2));
-            vector_size++;
+            ScAddr adjacted_node = adjacted_nodes_iterator->Get(2);
+
+            adjacted_nodes.push_back(adjacted_node);
         }
 
 
-        //просто вывод-проверка смежных ребер
-        /*
-        logger->Message(ScLog::Type::Info, "check adj_nodes: ");
-        for (int i=0; i<vector_size; i++)
-        {
-          ScAddr my_node=adjacted_nodes[i];
-          ScIterator3Ptr nodeInfo=ms_context->Iterator3(my_node, ScType::EdgeDCommonConst, ScType::LinkConst);
-          while(nodeInfo->Next())
-          {
-            logger->Message(ScLog::Type::Info, "Node" + CommonUtils::getLinkContent(ms_context.get(), nodeInfo->Get(2)));
-          }
-        }*/
+        return adjacted_nodes;
     }
 
-    bool find_hamiltonian_cycle(unique_ptr<ScMemoryContext>& ms_context, ScAddr current_node, ScAddr first_node, vector<ScAddr>& way, int32_t graph_size, int32_t current_size, ScLog* logger)
+    bool find_hamiltonian_cycle(unique_ptr<ScMemoryContext>& ms_context, ScAddr current_node, ScAddr first_node, vector<ScAddr> way, vector<ScAddr>& cycle, int32_t graph_size, int32_t current_size, ScLog* logger)
     {
+
+        ScIterator3Ptr nodeInfo = ms_context->Iterator3(current_node, ScType::EdgeDCommonConst, ScType::LinkConst);
+
+        //проверка намсхожесть с первым элементом
         if (current_node == first_node && current_size == graph_size)
         {
             logger->Message(ScLog::Type::Info, "Hamiltonian cycle was found!!!");
+            way.push_back(current_node);
+
+            cycle = way;
             return true;
         }
-        /*
-        else if(current_node==first_node && current_size!=graph_size)
-        {
-          return false;
-        }*/
+        //проверка, чтобы данного элемента не было в списке
+        if (find(way.begin(), way.end(), current_node) != way.end()) return false;
+
+        //добавляем вершину в путь
+        way.push_back(current_node);
+        current_size++;
 
         vector <ScAddr> adjacted_nodes = get_adjacted_nodes(ms_context, current_node, logger);
 
+
+
+        for (int i = 0; i < adjacted_nodes.size(); i++)
+        {
+            if (find_hamiltonian_cycle(ms_context, adjacted_nodes[i], first_node, way, cycle, graph_size, current_size, logger)) return true;
+
+            //else logger->Message(ScLog::Type::Info, "Next node");
+        }
+        //logger->Message(ScLog::Type::Info, "Go out");
+        return false;
 
 
     }
@@ -79,19 +89,6 @@ namespace exampleModule
     }
 
 
-
-    /*ScAddr get_first_node(unique_ptr<ScMemoryContext> &ms_context, ScAddr param)
-    {
-      ScAddr f_n;
-      ScIterator3Ptr it_for_first_el= ms_context->Iterator3(param, ScType::EdgeAccessConstPosPerm, ScType::NodeConst);
-      while(it_for_first_el->Next())
-      {
-        f_n=it_for_first_el->Get(2);
-        break;
-      }
-      return f_n;
-    }*/
-
     SC_AGENT_IMPLEMENTATION(CourseWorkAgent)
     {
         //Main nodes and tmpSize initialization 
@@ -104,15 +101,6 @@ namespace exampleModule
         ScAddr visited = ms_context->CreateNode(ScType::NodeConstClass); //посещенные
         ScAddr globalVisited = ms_context->CreateNode(ScType::NodeConstClass); //полностью посещенные
 
-
-
-
-        /*
-        ScAddr size_of_graph = ms_context->CreateNode(ScType::LinkVar);
-        auto strTmp = CommonUtils::getLinkContent(ms_context.get(), it3->Get(2)); //получить инфу с линки
-        ms_context->SetLinkContent(res, to_string(tmp)); записать инфу в линку
-
-        */
 
 
         if (!param.IsValid()) //проверка на валидность
@@ -141,25 +129,36 @@ namespace exampleModule
 
 
 
-        // ScAddr f_n;
-        // ScIterator3Ptr it_for_first_el= ms_context->Iterator3(param, ScType::EdgeAccessConstPosPerm, ScType::NodeConst);
-        // while(it_for_first_el->Next())
-        // {
-        //   f_n=it_for_first_el->Get(2);
-        //   break;
-        // }
 
-        //ScAddr first_node=get_first_node(ms_context, param);
 
         ScIterator3Ptr first_inf = ms_context->Iterator3(vector_of_nodes[0], ScType::EdgeDCommonConst, ScType::LinkConst);
-        while (first_inf->Next())
-        {
-            logger->Message(ScLog::Type::Info, "first_element: " + CommonUtils::getLinkContent(ms_context.get(), first_inf->Get(2)));
-        }
 
+
+        vector <ScAddr> path = {};
         vector <ScAddr> cycle = {};
 
-        find_hamiltonian_cycle(ms_context, vector_of_nodes[0], vector_of_nodes[0], cycle, graph_size, 5, logger);
+        if (!find_hamiltonian_cycle(ms_context, vector_of_nodes[0], vector_of_nodes[0], path, cycle, graph_size, 0, logger))
+        {
+            logger->Message(ScLog::Type::Info, "Hamiltonian cycle wasn't found");
+        }
+
+        else
+        {
+            for (int i = 0; i < cycle.size() - 1; i++)
+            {
+                ScIterator3Ptr nodeInfo = ms_context->Iterator3(cycle[i], ScType::EdgeDCommonConst, ScType::LinkConst);
+                while (nodeInfo->Next())
+                {
+                    logger->Message(ScLog::Type::Info, CommonUtils::getLinkContent(ms_context.get(), nodeInfo->Get(2)) + "->");
+                }
+
+            }
+            ScIterator3Ptr nodeInfo = ms_context->Iterator3(cycle[cycle.size() - 1], ScType::EdgeDCommonConst, ScType::LinkConst);
+            while (nodeInfo->Next())
+            {
+                logger->Message(ScLog::Type::Info, CommonUtils::getLinkContent(ms_context.get(), nodeInfo->Get(2)));
+            }
+        }
 
 
         utils::AgentUtils::finishAgentWork(ms_context.get(), questionNode, answer);//соединяет пустой узел и получает ответ;
