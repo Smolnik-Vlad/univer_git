@@ -1,0 +1,197 @@
+//Узлы
+//1
+sc_node_class->automobile;;
+
+sc_node_class-> vehicle;;//транспортное средство 
+
+sc_node_class->engeene;;
+sc_node_class->passangers;;
+sc_node_class->cargo;;
+sc_node_class->definition;;
+sc_node->node_2_1;;
+sc_node->node_2_2;;
+sc_node_tuple->tuple_2_1;;
+sc_node_norole_relation->broadcast_scText;;
+
+sc_node_role_relation->example;;
+sc_node->expencive_automobile;;
+
+sc_node_class->statement;;
+sc_node->node_2_3;;
+sc_node->node_2_4;;
+sc_node_tuple->tuple_2_2;;
+sc_node_norole_relation->speed;;
+sc_node->auto;;
+
+//2
+sc_node_class->manufacturer;; //производитель
+sc_node_norole_relation->mark;;
+sc_node_tuple->tuple_2_3;;
+sc_node->set_1;;
+sc_node_norole_relation->first_domain;;
+sc_node_norole_relation->second_domain;;
+sc_node_norole_relation->union;;
+sc_node_norole_relation->domain;;
+
+
+sc_node_class->arity;;
+sc_node_class->parametr;;
+sc_node_class->binary_relation;; //бинарное отношение
+sc_node_class->number;;
+sc_node->2;;
+
+sc_node->node_2_5;;
+sc_node->node_2_6;;
+sc_node_tuple->tuple_2_4;; 
+/*sc_node_class->anti_reflexive_relation;;
+sc_node_class->anti_simmetric_relation;;
+sc_node_class->anti_transitive_relation;;
+sc_node_class->oriented_relation;;*/
+
+sc_node->BMW;;
+sc_node->node_2_7;;
+
+sc_node_role_relation->belonging;;
+sc_node_tuple->tuple_2_5;;
+sc_node->node_2_8;;
+sc_node->node_2_9;;
+
+//решение
+//1.1
+automobile=>nrel_main_idtf: [automobile]
+(*
+    <-lang_en;;
+*);;
+automobile=>nrel_main_idtf: [автомобиль] //почему-то постоянно переводит на русскую 
+(*
+    <-lang_ru;;
+*);;
+
+//1.2
+
+vehicle=>nrel_inclusion: automobile;;
+
+//1.3
+automobile->rrel_key_sc_element: node_2_1;;
+definition->node_2_1;;
+
+tuple_2_1->vehicle;;
+tuple_2_1->engeene;;
+tuple_2_1->passangers;;
+tuple_2_1->cargo;;
+tuple_2_1=>nrel_using_constants: node_2_1;;
+
+node_2_2=>broadcast_scText: node_2_1;;
+
+node_2_1=>identifier: [опр. автомобиль]
+(*
+    <-lang_ru;;
+*);;
+
+node_2_2-> rrel_example: [самодвижущееся ТС для перевозки грузов и пассажиров.]
+(*                 
+    <-lang_ru;;
+*);;
+
+//1.4
+automobile->example: expencive_automobile;;
+
+//1.5
+
+node_2_3->rrel_key_sc_element: auto;;
+tuple_2_2->speed;;
+tuple_2_2->automobile;;
+node_2_3=>tuple_2_2;;
+statement->node_2_3;;
+node_2_3=>identifier: [выск. самый быстрый автомобиль в мире]
+(*
+    <-lang_ru;;
+*);;
+node_2_4=>broadcast_scText: node_2_3;;
+
+node_2_4->rrel_example: [Самый быстрый автомобиль в мире — Koenigsegg Jesko Absolut. Его максимальная скорость составляет 531 км/ч.]
+(*
+    <-lang_ru;;
+*);;
+
+
+//2.1
+
+mark=>nrel_main_idtf: [mark]
+(*
+    <-lang_en;;
+*);;
+mark=>nrel_main_idtf: [марка]
+(*
+    <-lang_ru;;
+*);;
+
+//2.2
+mark=>second_domain: manufacturer;;
+mark=>first_domain: automobile;;
+tuple_2_3->automobile;;
+tuple_2_3->manufacturer;;
+tuple_2_3=>union: set_1;;
+mark=>domain: set_1;;
+
+//2.3
+parametr->arity;;
+arity->binary_relation;;
+binary_relation->mark;;
+binary_relation=>2;;
+number->2;;
+
+//2.4
+
+mark->rrel_key_sc_element: node_2_5;;
+definition->node_2_5;;
+
+tuple_2_4->automobile;;
+tuple_2_4->manufacturer;;
+tuple_2_4=>nrel_using_constants: node_2_5;;
+
+node_2_5=>identifier: [опр. марка]
+(*
+    <-lang_ru;;
+*);;
+
+node_2_6=>broadcast_scText: node_2_5;;
+node_2_6=>rrel_example: [обозначение, цель которого обеспечить различие между автомобилями о принадлежности к производителю.]
+(*
+    <-lang_ru;;
+*);;
+
+//2.5
+antireflexive_relation->mark;;
+antisymmetric_relation->mark;;
+antitransitive_relation->mark;;
+
+binary_relation=>nrel_inclusion: antireflexive_relation;;
+binary_relation=>nrel_inclusion: antisymmetric_relation;;
+binary_relation=>nrel_inclusion: antitransitive_relation;;
+
+relation=>nrel_inclusion: binary_relation;;
+relation=>nrel_inclusion: oriented_relation;;
+
+//2.6
+node_2_7=>mark: BMW;;
+automobile->node_2_7;;
+
+//2.7
+mark->rrel_key_sc_element: node_2_8;;
+statement->node_2_8;;
+
+tuple_2_5->automobile;;
+tuple_2_5->manufacturer;;
+tuple_2_5->belonging;;
+tuple_2_5=>nrel_using_constants: node_2_8;;
+
+node_2_9->rrel_example: [марка самого быстрого автомобиля в мире - Koenigsegg Jesko Absolut ]
+(*
+    <-lang_ru;;
+*);;
+node_2_9=>broadcast_scText: node_2_8;;
+node_2_8->identifier: [Утв. свойство марки автомобиля]
+(*
+    <-lang_ru;;
+*);;

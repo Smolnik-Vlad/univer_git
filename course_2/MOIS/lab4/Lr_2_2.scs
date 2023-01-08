@@ -1,0 +1,84 @@
+nrel_force <- sc_node_norole_relation;;
+nrel_impact <- sc_node_norole_relation;;
+nrel_appendix <- sc_node_norole_relation;;
+nrel_change <- sc_node_norole_relation;;
+nrel_speed <- sc_node_norole_relation;;
+nrel_body <- sc_node_norole_relation;;
+nrel_deformation <- sc_node_norole_relation;;
+nrel_voltage <- sc_node_norole_relation;;
+nrel_domain <- sc_node_norole_relation;;
+nrel_first_domain<- sc_node_norole_relation;;
+nrel_second_domain<- sc_node_norole_relation;;
+
+
+concept_magnitude <- sc_node_not_relation;;
+concept_measure <- sc_node_not_relation;;
+concept_body <- sc_node_not_relation;;
+concept_field <- sc_node_not_relation;;
+concept_essence <- sc_node_not_relation;;
+concept_value <- sc_node_not_relation;;
+concept_table_1 <- sc_node_not_relation;;
+concept_1n <- sc_node_not_relation;;
+concept_number <- sc_node_not_relation;;
+concept_arity <- sc_node_not_relation;;
+concept_parameter <- sc_node_not_relation;;
+
+
+
+force => nrel_main_idtf:[force](*<- lang_eng;;*);;
+force => nrel_main_idtf:[сила](*<- lang_ru;;*);;
+
+definition -> ...(*
+    ->rrel_key_sc_element: force;;
+
+    <=nrel_sc_text_translation: ... (*->rrel_example:[Си́ла — физическая векторная величина, являющаяся мерой воздействия на данное тело со стороны других тел или полей.](*<-lang_ru;;*);;*);;
+
+    =>nrel_main_idtf:[Определение(сила*)](*<-lang_ru;;*);;
+
+    =>nrel_using_constants:{
+        magnitude;
+        measure;
+		body;
+		field;
+		nrel_impact
+    };;
+*);;
+
+statement -> ...(*
+    ->rrel_key_sc_element:force;;
+
+    <=nrel_sc_text_translation: ...(*->rrel_example:[Приложение силы обусловливает изменение скорости тела или появление деформаций и механических напряжений. ](*<lang_ru;;*);;*);;
+
+    =>nrel_main_idtf:[Утверждение(приложение*, сила*, изменение*, скорость*, тело*, деформация*, напряжение*)](*<-lang_ru;;*);;
+
+    =>nrel_using_constants:{
+        nrel_appendix;
+        nrel_force;
+        nrel_change;
+		nrel_speed;
+		nrel_body;
+		nrel_deformation;
+		nrel_voltage
+    };;
+*);;
+
+
+force=>nrel_second_domain:concept_essence;;
+force=>nrel_first_domain:concept_value;;
+set=>nrel_union:{
+       concept_essence;
+       concept_value
+       };;
+force=>nrel_domain:set;;       
+
+
+concept_arity->binary_relation;
+concept_parameter;;
+binary_ralation->nrel_force;
+=>2;;
+concept_number->2;;
+
+
+concept_essence->concept_table_1;;
+concept_table_1=>nrel_force:concept_1n;;
+concept_value->concept_1n;;

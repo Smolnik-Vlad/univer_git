@@ -1,0 +1,53 @@
+concept_physics <- sc_node_not_relation;;
+concept_laws <- sc_node_not_relation;;
+concept_natural_science <- sc_node_not_relation;;
+concept_science <- sc_node_not_relation;;
+concept_nature_laws <- sc_node_not_relation;;
+concept_matter <- sc_node_not_relation;;
+concept_mechanics<- sc_node_not_relation;;
+
+
+nrel_basics <- sc_node_norole_relation;;
+nrel_transformation <- sc_node_norole_relation;;
+nrel_traffic <- sc_node_norole_relation;;
+nrel_inclusion <- sc_node_norole_relation;;
+
+
+
+
+concept_physics => nrel_main_idtf:[physics](*<- lang_en;;*);;
+concept_physics => nrel_main_idtf:[физика](*<- lang_ru;;*);;
+
+
+
+definition -> ...(*
+    ->rrel_key_sc_element: concept_physics;;
+
+    <=nrel_sc_text_translation: ... (*->rrel_example:[Физика — область естествознания: наука о наиболее общих законах природы, о материи, её структуре, движении и правилах трансформации.](*<-lang_ru;;*);;*);;
+
+    =>nrel_main_idtf:[Определение(физика)](*<-lang_ru;;*);;
+
+    =>nrel_using_constants:{
+		nrel_transformation;
+        natural_science;
+        nature_laws;
+        matter;
+		nrel_traffic
+    };;
+*);;
+
+statement -> ...(*
+    ->rrel_key_sc_element:concept_physics;;
+
+    <=nrel_sc_text_translation: ...(*->rrel_example:[Понятия физики и её законы лежат в основе всего естествознания.](*<lang_ru;;*);;*);;
+
+    =>nrel_main_idtf:[Утверждение(физика, законы, основы*, естествознание)](*<-lang_ru;;*);;
+
+    =>nrel_using_constants:{
+        physics;
+        laws;
+		nrel_basics;
+		natural_science
+    };;
+*);;
+concept_physics=>nrel_inclusion:concept_mechanics;;

@@ -1,0 +1,134 @@
+lab4_3=[*
+
+sc_node_not_relation->mechanical_vehicle;;
+sc_node_not_relation->automobile1;;
+sc_node_norole_relation->possess;;
+sc_node_not_relation->engeene1;;
+sc_node_not_relation->passangers1;;
+sc_node_not_relation->cargo1;;
+sc_node_not_relation->the_fastest;;
+sc_node_not_relation-> Koenigsegg_Jesko_Absolut;; 
+sc_node_norole_relation->peculiarity;;
+sc_node_norole_relation->mark;;
+sc_node_not_relation->mark_cls;;
+
+nrel_generality-> ...
+(*
+    ->rrel_bind_variables: ...
+                            (*
+                                <- _x;;
+                            *);;
+    -> ...
+    (*
+        <-nrel_implication;;
+        ->rrel_if: ...
+                    (*
+                        <-mechanical_vehicle(* _->_x;;*);;
+                        <-_x;;
+                    *);;
+
+        ->rrel_then: ...
+                    (*
+                       <-nrel_existence;;
+                       ->rrel_bind_variables: ...
+                                            (*
+                                                <- _d;;
+                                                <- _p;;
+                                                <- _g;;
+                                            *);;
+
+                        -> ...
+                            (*
+                                <-nrel_equivalence;;
+                                -> ...
+                                    (*
+                                        <-automobile(*_->_x;;*);;
+                                        <- _x;;
+                                    *);;
+
+                                -> ...
+                                    (*
+                                        <-nrel_conjunction;;
+                                        -> ...
+                                        (*
+                                            
+                                            
+                                            <- possess;;
+                                            <- _x(* _=>_d;;*);;
+                                            <- engeene_1(*_->_d;;*);;
+                                        *);;
+
+                                        -> ...
+                                        (*
+                                            
+                                            
+                                            <- possess;;
+                                            <- _x(* _=>_p;;*);;
+                                            <- passangers1(*_->_p;;*);;
+                                        *);;
+                                        -> ...
+                                        (*
+                                            
+                                            
+                                            <- possess;;
+                                            <- _x(* _=>_g;;*);;
+                                            <- cargo1(*_->_g;;*);;
+                                        *);;
+                                    *);;
+
+                            *);;
+                    *);;
+    *);;
+
+*);;
+
+nrel_generality-> ...
+(*
+    ->rrel_bind_variables: ...
+                            (*
+                                <- _y;;
+                                <- _k;;
+                            *);;
+
+    -> ...
+    (*
+        <-nrel_implication;;
+        ->rrel_if: ...
+                    (*
+                        <- automobile1(*_->_y;;*);;
+                        <- the_fastest(*_->_k;;*);;
+                        <- peculiarity;;
+                        <- _y(* _=>_k;;*);;
+
+                    *);;
+
+        ->rrel_then: ...
+                    (*
+                        <-nrel_existence;;
+                        ->rrel_bind_variables: ...
+                        (*
+                            <- _c;;
+                        *);;
+
+                        ->...
+                        (*
+                            <-nrel_equivalence;;
+                            -> ...
+                            (*
+                                <- Koenigsegg_Jesko_Absolut(*_->_c;;*);;
+                                <- mark;;
+                                <- _c(* _=>_y;;*);;
+                            *);;
+
+                            -> ...
+                            (*
+                                <- mark_cls(*_->_c;;*);;
+                            *);;
+                        *);;
+
+                    *);;
+
+    *);;
+*);;
+
+*];;

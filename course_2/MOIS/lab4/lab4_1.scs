@@ -1,0 +1,125 @@
+sc_node_class->trapezoid;;
+sc_node_class->exact_value;;
+sc_node_class->length;;
+sc_node_class->line_segment;;
+sc_node_class->diagonal;;
+sc_node_class->point;;
+sc_node_class->1_sm;;
+sc_node_class->40_sm;;
+sc_node_class->meathurement_with_a_fixed_unit;;
+sc_node_class->class_for_BC;;
+sc_node_class->class_for_AD;;
+sc_node_class->node_class_1;;
+
+
+
+
+sc_node->ABCD;;
+sc_node->BD;;
+sc_node->OD;;
+sc_node->BC;;
+sc_node->AC;;
+sc_node->AD;;
+sc_node->40;;
+sc_node->x;;
+sc_node->O;;
+sc_node->obj_for_BC;;
+sc_node->obj_for_AD;;
+sc_node->node_1;;
+sc_node->7;;
+sc_node->3;;
+
+
+sc_node_tuple->tuple_1;; //вот тут мб вопрос
+sc_node_tuple->comp1;; //и тут вопрос мб
+sc_node_tuple->comp2;;
+
+
+sc_node_norole_relation->diagonal_segment;;
+sc_node_norole_relation->segment_value;;
+sc_node_norole_relation->measurement_in_santimeters;;
+sc_node_norole_relation->measure;;
+sc_node_norole_relation->diagonal_trapezoid;;
+sc_node_norole_relation->point_intersection;;
+sc_node_norole_relation->bases_of_a_trapezoid;;
+sc_node_norole_relation->composition;;
+
+
+zadacha->[*
+
+trapezoid->ABCD;;
+
+
+diagonal->AC;;
+diagonal->BD;;
+
+ABCD=>diagonal_trapezoid: BD;;
+ABCD=>diagonal_trapezoid: AC;;
+
+
+
+
+
+
+line_segment->OD;;
+line_segment->BD;;
+line_segment->BC;;
+line_segment->AC;;
+line_segment->AD;;
+
+tuple_1->BD;;
+tuple_1->AC;;
+tuple_1=>point_intersection: O;;
+point->O;;
+
+
+BD => diagonal_segment: OD;;
+OD=>segment_value: node_1;;	
+40_sm->BD;;
+
+node_class_1->node_1;;
+
+exact_value->node_class_1;;
+exact_value->40_sm;;
+
+length->40_sm;;
+lenght->node_class_1;;
+lenght->1_sm;;
+
+40_sm=>measurement_in_santimeters: 40;;
+node_class_1=>measurement_in_santimeters: x;;
+measurement_in_santimeters=>measure: 1_sm;;
+meathurement_with_a_fixed_unit->measurement_in_santimeters;;
+
+
+
+
+//вычисление величины (всякие суммы и тд)
+ABCD=>bases_of_a_trapezoid: AD;;
+ABCD=>bases_of_a_trapezoid: BC;;
+
+class_for_BC->BC;;
+class_for_AD->AD;;
+
+lenght->class_for_AD;;
+lenght->class_for_BC;;
+
+exact_value->class_for_AD;;
+exact_value->class_for_BC;;
+
+class_for_AD=>measurement_in_santimeters: obj_for_AD;;
+class_for_BC=>measurement_in_santimeters:  obj_for_BC;;
+
+
+
+comp1->x;;
+comp1->obj_for_AD;;
+comp1=>composition: obj_for_BC;;
+
+
+comp2->x;;
+comp2->7;;
+
+comp2=>composition: 3;;
+
+*];;

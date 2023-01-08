@@ -43,7 +43,7 @@ namespace exampleModule
     bool find_hamiltonian_cycle(unique_ptr<ScMemoryContext>& ms_context, ScAddr current_node, ScAddr first_node, vector<ScAddr> way, vector<ScAddr>& cycle, int32_t graph_size, int32_t current_size, ScLog* logger)
     {
 
-        ScIterator3Ptr nodeInfo = ms_context->Iterator3(current_node, ScType::EdgeDCommonConst, ScType::LinkConst);
+        //ScIterator3Ptr nodeInfo = ms_context->Iterator3(current_node, ScType::EdgeDCommonConst, ScType::LinkConst);
 
         //проверка намсхожесть с первым элементом
         if (current_node == first_node && current_size == graph_size)
