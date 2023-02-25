@@ -60,18 +60,7 @@ class Sets_and_operations:
 
         return my_set
 
-    def output_a_set(self, my_set: MySet, first_enter=False) -> str:
 
-        """
-        complex set to string conversion function
-        """
-
-        line_set = ', '.join(my_set.elements)
-
-        for subset in my_set.subsets:
-            line_set += f', {self.output_a_set(subset)}' if my_set.elements else f'{self.output_a_set(subset)}'
-        linse_result = '{%s}' % line_set  # if not first_enter else line_set
-        return linse_result
 
     def __find_suboperation(self, substr: str) -> int:
         check = 0
@@ -84,39 +73,19 @@ class Sets_and_operations:
             if check == 0:
                 return i
 
-    def __from_expression_to_list(self, expression: str) -> List[str]:
+
+    def from_expression_to_list(self, expression: str) -> List[str]:
+
+        """
+        The function is intended for translating an expression from a string into a list consisting of characters,
+        sets and nested lists
+        """
+
         sets_and_operations = list()
         line_set = expression.replace(' ', '')
         numb_of_element = 0
         first_position = 0
         last_position = 0
-        # for i in range(len(line_set)):
-        #     if line_set[i] in self.list_of_operations and i>first_position:
-        #         class_set = self.__from_string_to_set(line_set[first_position+1:i-1])
-        #         sets_and_operations.append(class_set)
-        #         # else:
-        #         #     class_set = self.solution(line_set[first_position + 1:i - 1])
-        #         #     sets_and_operations.append(class_set)
-        #
-        #         sets_and_operations.append(line_set[i])
-        #         first_position = i + 1
-        #
-        #
-        #
-        #     elif line_set[i] == "(" and i>=first_position:
-        #         first_position = i
-        #         last_position = self.__find_suboperation(line_set[first_position:])+i
-        #         sets_and_operations.append(self.__from_expression_to_list(line_set[first_position+1:last_position]))
-        #         if last_position+1 < len(line_set):
-        #             sets_and_operations.append(line_set[last_position+1])
-        #         first_position = last_position+1
-        #
-        #
-        #
-        #
-        # if first_position < len(line_set):
-        #     class_set = self.__from_string_to_set(line_set[first_position+2:-1])
-        #     sets_and_operations.append(class_set)
 
         while numb_of_element < len(line_set):
             if line_set[numb_of_element] in self.list_of_operations:
@@ -127,7 +96,7 @@ class Sets_and_operations:
 
             elif line_set[numb_of_element] == "(":
                 last_position = self.__find_suboperation(line_set[first_position:]) + first_position
-                sets_and_operations.append(self.__from_expression_to_list(line_set[first_position + 1:last_position]))
+                sets_and_operations.append(self.from_expression_to_list(line_set[first_position + 1:last_position]))
                 if last_position + 1 < len(line_set):
                     sets_and_operations.append(line_set[last_position + 1])
 
@@ -142,11 +111,44 @@ class Sets_and_operations:
 
         return sets_and_operations
 
-    def solution(self, line_set: str):
-        list_of_expression = self.__from_expression_to_list(line_set)
-        return list_of_expression
+    def __find_result(self, list_of_expression: list) -> MySet:
+        while len(list_of_expression) > 1:
+            if type(list_of_expression[0]) != list:
+                first_set = list_of_expression.pop(0)
+            else:
+                first_set = self.__find_result(list_of_expression.pop(0))
 
-    def check(self, s):
+            operation = list_of_expression.pop(0)
+
+            if type(list_of_expression[0]) != list:
+                second_set = list_of_expression.pop(0)
+            else:
+                second_set = self.__find_result(list_of_expression.pop(0))
+
+            if operation == '+':
+                list_of_expression.insert(0, first_set + second_set)
+            elif operation == '*':
+                list_of_expression.insert(0, first_set * second_set)
+            elif operation == '-':
+                list_of_expression.insert(0, first_set - second_set)
+            elif operation == '/':
+                list_of_expression.insert(0, first_set / second_set)
+
+        if type(list_of_expression[0]) == list:
+            return self.__find_result(list_of_expression[0])
+
+        return list_of_expression.pop(0)
+
+    def solution(self, line_set: str):
+        if line_set.find('{') == -1:
+            raise ValueError('The expression is given without brackets')
+
+        list_of_expression = self.from_expression_to_list(line_set)
+        result_set = self.__find_result(list_of_expression)
+        return result_set
+
+    @staticmethod
+    def check(s):
         # a = self.__from_string_to_set(s)
-        # print(self.output_a_set(a, first_enter=True))
-        self.solution(s)
+        a = Sets_and_operations().solution(s)
+        print(a.output_a_set(first_enter=True))
