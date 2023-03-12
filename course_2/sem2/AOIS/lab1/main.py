@@ -221,6 +221,9 @@ class BinaryMethods:
 
     @staticmethod
     def from_decimal_to_float(decimal_num: float) -> str:
+        """
+        Перевод полноценного числа в бинарное число с мантиссей
+        """
         result = ''
         result = '0' if decimal_num >= 0 else '1'
 
@@ -228,17 +231,57 @@ class BinaryMethods:
         int_number = int_number[int_number.find('1'):]
 
         fractional_number = BinaryMethods.from_fraction_to_bin(
-            str(decimal_num)[str(decimal_num).find('.')+1:])
+            str(decimal_num)[str(decimal_num).find('.') + 1:])
 
         shift_order = BinaryMethods.find_shift_order(int_number, fractional_number)[24:]
-        result = result +' ' + shift_order
+        result = result + ' ' + shift_order
 
         mantissa = str(int(int_number + fractional_number))[1:23]
         mantissa = mantissa.ljust(23, '0')
-        print(f'len: {len(mantissa)}')
-
         result = result + ' ' + mantissa
         return result
+
+    @staticmethod
+    def from_binary_remainder_to_decimal(binary_remainder):
+        """
+        перевод дробной части бинарного числа в дробную часть 10го числа
+        """
+        decimal_remainder = 0
+        for i in range(len(binary_remainder)):
+            if binary_remainder[i] == '1':
+                decimal_remainder += 2 ** (-i - 1)
+        return decimal_remainder
+
+    @staticmethod
+    def from_float_to_decimal(float_num: str) -> float:
+        float_num = float_num.replace(' ', '')
+
+        shift = float_num[1:9]
+        # if int(shift) < int('00000000000000000000000001111111'):
+        #     shift = BinaryMethods.from_binary_to_decimal(
+        #         BinaryMethods.add_binary(list('00000000000000000000000001111111'), list(shift.rjust(32, '0'))))
+        # elif int(shift) > int('00000000000000000000000001111111'):
+        #     shift = BinaryMethods.from_binary_to_decimal(BinaryMethods.add_binary(list(shift.ljust(32, '0')), list(
+        #         BinaryMethods.get_negative_binary('00000000000000000000000001111111'))))
+        shift = -BinaryMethods.from_binary_to_decimal(BinaryMethods.add_binary(list('00000000000000000000000001111111'),
+                                                                               list(BinaryMethods.get_negative_binary(
+                                                                                   shift.rjust(32, '0')))))
+
+        if shift > 0:
+            whole_part = '1' + float_num[9:][:shift]
+            fractional_part = float_num[9:][abs(shift):]
+        elif shift < 0:
+            whole_part = '0'
+            fractional_part = '0' * (abs(shift) - 1) + '1' + float_num[9:]
+        else:
+            whole_part = '1'
+            fractional_part = float_num[9:]
+
+        result = float(
+            str(BinaryMethods.from_binary_to_decimal(whole_part.rjust(32, '0'))) + str(
+                BinaryMethods.from_binary_remainder_to_decimal(fractional_part))[1:])
+
+        return result if float_num[0] == '0' else -result
 
 
 print(BinaryMethods.from_decimal_to_binary(127))
@@ -249,5 +292,12 @@ print('decimal: ' + str(BinaryMethods.from_binary_to_decimal('000000000000000000
 print(BinaryMethods.divide_dec(-35, 7))
 
 print(BinaryMethods.find_shift_order('0', '0101'))
-print(BinaryMethods.from_fraction_to_bin('1025'))
-print(BinaryMethods.from_decimal_to_float(0.0234657))
+print('дробная десятичного -> дробная бинарного: ' + BinaryMethods.from_fraction_to_bin('0234657'))
+
+b = BinaryMethods.from_decimal_to_float(1.125)
+print(f'полноценного десятичное -> бинарное мантисса: {b}', end='\n\n')
+
+a = BinaryMethods.from_binary_remainder_to_decimal('000001100000000111011001000111100001001111100111001111011')
+print(f'дробная бинарного -> дробную 10го: {a}')
+
+print(BinaryMethods.from_float_to_decimal('0 01111111 00100000000000000000000'))
