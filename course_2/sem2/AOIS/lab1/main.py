@@ -236,7 +236,7 @@ class BinaryMethods:
         shift_order = BinaryMethods.find_shift_order(int_number, fractional_number)[24:]
         result = result + ' ' + shift_order
 
-        mantissa = str(int(int_number + fractional_number))[1:23]
+        mantissa = str(int(int_number + fractional_number))[1:24]
         mantissa = mantissa.ljust(23, '0')
         result = result + ' ' + mantissa
         return result
@@ -277,8 +277,6 @@ class BinaryMethods:
 
         return result if float_num[0] == '0' else -result
 
-
-
     @staticmethod
     def binary_float_addition(num1: str, num2: str) -> str:
         num1 = num1.replace(' ', '')
@@ -299,15 +297,17 @@ class BinaryMethods:
         mantissa2 = '1' + num2[9:]
         exp_result = 0
         if int(exp1) > int(exp2):
-            diff = BinaryMethods.add_binary(list(str(exp1)),
-                                            list(BinaryMethods.get_negative_binary(str(exp2))))  # exp1 - exp2
+            diff = BinaryMethods.add_binary(list(str(BinaryMethods.from_decimal_to_binary(exp1))),
+                                            list(BinaryMethods.get_negative_binary(
+                                                str(BinaryMethods.from_decimal_to_binary(exp2)))))  # exp1 - exp2
 
             diff_dec = BinaryMethods.from_binary_to_decimal(diff)
             mantissa2 = '0' * diff_dec + mantissa2[:-diff_dec]
             exp_result = exp1
         elif int(exp1) < int(exp2):
-            diff = BinaryMethods.add_binary(list(str(exp2)),
-                                            list(BinaryMethods.get_negative_binary(str(exp1))))  # exp2 - exp1
+            diff = BinaryMethods.add_binary(list(str(BinaryMethods.from_decimal_to_binary(exp2))),
+                                            list(BinaryMethods.get_negative_binary(
+                                                str(BinaryMethods.from_decimal_to_binary(exp1)))))  # exp2 - exp1
             diff_dec = BinaryMethods.from_binary_to_decimal(diff)
             mantissa1 = '0' * diff_dec + mantissa1[:-diff_dec]
             exp_result = exp2
@@ -328,12 +328,13 @@ class BinaryMethods:
                                                     list(BinaryMethods.get_negative_binary(mantissa1.rjust(32, '0'))))
 
         else:
-            mantissa_sum = '0'*23
-        #добавить вариант, когда в результате получается 0
+            mantissa_sum = '0' * 23
+        # добавить вариант, когда в результате получается 0
 
-        mantissa_sum = mantissa_sum[mantissa_sum.find('1'):]  # [:24] #здесь может быть проблема в том, что по какой-то причине размер мантиссы 24
-        addition_shift = len(mantissa_sum) - 24 #проверить, может ли быть отрицательным
-        #решить вопрос с моментом, когда мантиса стала на 1 меньше, и тогда нужно и сдвиг уменьшать, и мантису увеличивать
+        mantissa_sum = mantissa_sum[mantissa_sum.find(
+            '1'):]  # [:24] #здесь может быть проблема в том, что по какой-то причине размер мантиссы 24
+        addition_shift = len(mantissa_sum) - 24  # проверить, может ли быть отрицательным
+        # решить вопрос с моментом, когда мантиса стала на 1 меньше, и тогда нужно и сдвиг уменьшать, и мантису увеличивать
         if addition_shift < 0:
             mantissa_sum += '0' * abs(addition_shift)
 
@@ -350,7 +351,7 @@ class BinaryMethods:
             elif exp1 < exp2:
                 result_sign = sign2
             else:
-                    result_sign = sign2 if int(mantissa1) < int(mantissa2) else sign1
+                result_sign = sign2 if int(mantissa1) < int(mantissa2) else sign1
 
         shift_result = BinaryMethods.add_binary(list(BinaryMethods.from_decimal_to_binary(exp_result)),
                                                 list('01111111'))  # итоговое значение сдвига
@@ -359,6 +360,13 @@ class BinaryMethods:
 
         result = result_sign + shift_result[-8:] + result_mantissa
         return result
+
+    @staticmethod
+    def binary_float_addition2(float1: float, float2: float) -> float:
+        number1 = BinaryMethods.from_decimal_to_float(float1)
+        number2 = BinaryMethods.from_decimal_to_float(float2)
+        result = BinaryMethods.binary_float_addition(number1, number2)
+        return BinaryMethods.from_float_to_decimal(result)
 
 
 #
@@ -372,19 +380,22 @@ class BinaryMethods:
 # print(BinaryMethods.find_shift_order('0', '0101'))
 # print('дробная десятичного -> дробная бинарного: ' + BinaryMethods.from_fraction_to_bin('0234657'))
 
-b = BinaryMethods.from_decimal_to_float(48.2)
-print(f'полноценного десятичное -> бинарное мантисса: {b}', end='\n\n')
+b = BinaryMethods.from_decimal_to_float(-2.328)
+c = BinaryMethods.from_decimal_to_float(442.5)
+print(f'полноценного десятичное -> бинарное мантисса: {b}.........{c}', end='\n\n')
 
-a = BinaryMethods.from_binary_remainder_to_decimal('000001100000000111011001000111100001001111100111001111011')
-print(f'дробная бинарного -> дробную 10го: {a}')
+print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('01000001101110000000000000000000')))
 
-print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('11000001001110111000010100100000')))
+num1 = '0 10000000 00101001111110111110011'  # 2.328
+# num2 = '0 10000010 10010111101011100001010'  #
+num2 = '1 10000111 10111010100000000000000'  # 442.5
+result = BinaryMethods.binary_float_addition(num1,
+                                             num2)  # проблема со сдвигом (если он одинаков) и с отрицательным числом
+print(result)
+print(BinaryMethods.from_float_to_decimal(result))  # 12
 
-num1 = '0 10000100 00100011110101110000100'  # 36.48
-#num2 = '0 10000010 10010111101011100001010'  # 12.74
-num2 = '1 10000100 10000001100110011001100' # -48.2
-result = BinaryMethods.binary_float_addition(num1, num2)  # проблема со сдвигом (если он одинаков) и с отрицательным числом
-print(result)  # '11000001001111010110100000000000'
+
 
 # "Бланки, заполнить фамилии и распечатать в нужном количестве"
-#Условие с 0
+# Условие с 0
+# 0 10000011 11000011111101111100111
