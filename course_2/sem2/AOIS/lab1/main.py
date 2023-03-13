@@ -1,19 +1,19 @@
 class BinaryMethods:
 
     @staticmethod
-    def get_positive_binary(DecimalNum: int) -> str:
-        BinaryNum = ""
+    def get_positive_binary(decimal_num: int) -> str:
+        binary_num = ""
         # генерируем двоичное представление числа в обычном коде
-        while DecimalNum > 0:
-            remainder = DecimalNum % 2
-            BinaryNum = str(remainder) + BinaryNum
-            DecimalNum = DecimalNum // 2
-        binary_num = BinaryNum.rjust(32, "0")  # дополнение строки до 32 битов
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_num = str(remainder) + binary_num
+            decimal_num = decimal_num // 2
+        binary_num = binary_num.rjust(32, "0")  # дополнение строки до 32 битов
         return binary_num
 
     @staticmethod
-    def get_negative_binary(DecimalNum: str) -> str:
-        inverted_bits = ''.join(['1' if bit == '0' else '0' for bit in DecimalNum])
+    def get_negative_binary(decimal_num: str) -> str:
+        inverted_bits = ''.join(['1' if bit == '0' else '0' for bit in decimal_num])
 
         # Add 1 to the inverted bits to get the two's complement
         carry = True
@@ -54,26 +54,13 @@ class BinaryMethods:
         return s
 
     @staticmethod
-    def compare_abs_elements(a, b):
-        if a[0] != b[0]:
-            if a[0] == '1':
-                negative_binary = list(BinaryMethods.get_negative_binary(a))
-                return True if negative_binary == a else False
-
-            else:
-                negative_binary = list(BinaryMethods.get_negative_binary(a))
-                return True if negative_binary == b else False
-
-        return False
-
-    @staticmethod
     def add_binary(a_bits: list, b_bits: list) -> str:
         # Приведение чисел к 32-битному двоичному формату дополнительного кода
 
         a_bits: list = ['0' for _ in range(32 - len(a_bits))] + a_bits
         b_bits: list = ['0' for _ in range(32 - len(b_bits))] + b_bits
 
-        result = ""
+        add_binary_result = ""
         carry = 0
 
         # складывание двух чисел
@@ -87,9 +74,9 @@ class BinaryMethods:
                 carry = 0
 
             # добавление бита суммы в результат
-            result = str(bit_sum % 2) + result
+            add_binary_result = str(bit_sum % 2) + add_binary_result
 
-        return result
+        return add_binary_result
 
     @staticmethod
     def add_decimal(a: int, b: int) -> int:
@@ -98,32 +85,31 @@ class BinaryMethods:
         """
         a_bits = list(BinaryMethods.from_decimal_to_binary(a))
         b_bits = list(BinaryMethods.from_decimal_to_binary(b))
-        result: str = BinaryMethods.add_binary(a_bits, b_bits)
-        return BinaryMethods.from_binary_to_decimal(result)
+        add_decimal_result: str = BinaryMethods.add_binary(a_bits, b_bits)
+        return BinaryMethods.from_binary_to_decimal(add_decimal_result)
 
     @staticmethod
     def positive_multiplication_of_numbers(a: int, b: int) -> int:
-        result = '0' * 32
+        positive_multiplication_result = '0' * 32
         a_binary: str = BinaryMethods.from_decimal_to_binary(a)
         b_binary: str = BinaryMethods.from_decimal_to_binary(b)
         for i in range(31, -1, -1):
-            result = list(result)
+            positive_multiplication_result = list(positive_multiplication_result)
             # Если текущий бит второго числа равен 1, прибавляем к результату первое число, сдвинутое на i позиций
             if b_binary[i] == '1':
                 # Сдвигаем первое число на i позиций влево, добавляя i нулей в конец
                 shifted_a = list(a_binary[(31 - i):] + '0' * (31 - i))
-                a = len(shifted_a)
                 # Добавляем сдвинутое число к результату
-                result = BinaryMethods.add_binary(result, shifted_a)
+                positive_multiplication_result = BinaryMethods.add_binary(positive_multiplication_result, shifted_a)
             # Возвращаем результат, обрезанный до 32 бит
-        res_str = ''.join(result)
+        res_str = ''.join(positive_multiplication_result)
         return int(res_str[-32:], 2)
 
     @staticmethod
     def multiplication_of_numbers(a: int, b: int) -> int:
-        result = BinaryMethods.positive_multiplication_of_numbers(abs(a), abs(b))
+        multiplication_result = BinaryMethods.positive_multiplication_of_numbers(abs(a), abs(b))
 
-        return result if ((a > 0 and b > 0) or (a < 0 and b < 0)) else -result
+        return multiplication_result if ((a > 0 and b > 0) or (a < 0 and b < 0)) else -multiplication_result
 
     @staticmethod
     def divide_bin(a: str, b: str):
@@ -141,66 +127,45 @@ class BinaryMethods:
 
         # Инициализация остатка и результата
         remainder = ''
-        result = ''
+        divide_bin_result = ''
 
-        # Пока есть нерасмотренные цифры
         for i in range(len(a)):
             current = remainder + a[i]
 
             # Если текущее значение меньше b, добавляем следующий бит и переходим к следующей цифре
             if int(current) < int(b):
                 remainder = current
-                result += '0'
+                divide_bin_result += '0'
                 continue
 
             # Иначе, вычитаем b из текущего значения и добавляем единицу к результату
             # remainder = bin(int(current) - int(b, 2))[2:].zfill(32)
             remainder = str(int(BinaryMethods.add_binary(list(current.zfill(32)),
                                                          list(BinaryMethods.get_negative_binary(b.zfill(32))))))
-            result += '1'
+            divide_bin_result += '1'
 
-        # Если остаток содержит только нули, возвращаем только результат
-        # if int(remainder, 2) == 0:
-        #     return result.zfill(32)
-        #
-        # # Иначе, добиваем результат нулями до нужной точности
-        # while len(result) < 32 + 5:
-        #     current = remainder + '0'
-        #     current_int = int(current, 2)
-        #
-        #     if current_int < int(b, 2):
-        #         remainder = current
-        #         result += '0'
-        #         continue
-        #
-        #     remainder = bin(current_int - int(b, 2))[2:].zfill(32)
-        #     result += '1'
-        #
-        # # Возвращаем результат с округлением до 5 знаков после запятой
-        # return '{:.5f}'.format(int(result, 2) / (2 ** 5))
-
-        return result.zfill(32)
+        return divide_bin_result.zfill(32)
 
     @staticmethod
     def divide_dec(a: int, b: int):
-        result = BinaryMethods.divide_bin(BinaryMethods.from_decimal_to_binary(abs(a)),
-                                          BinaryMethods.from_decimal_to_binary(abs(b)))
+        divide_dec_result = BinaryMethods.divide_bin(BinaryMethods.from_decimal_to_binary(abs(a)),
+                                                     BinaryMethods.from_decimal_to_binary(abs(b)))
 
-        result = BinaryMethods.from_binary_to_decimal(result)
-        return result if (a > 0 and b > 0) or (a < 0 and b < 0) else -result
+        divide_dec_result = BinaryMethods.from_binary_to_decimal(divide_dec_result)
+        return divide_dec_result if (a > 0 and b > 0) or (a < 0 and b < 0) else -divide_dec_result
 
     @staticmethod
     def from_fraction_to_bin(decimal_part: str):
         decimal_part = float(f'0.{decimal_part}')
-        result = ""
-        while decimal_part != 0 and len(result) < 127:
+        from_fraction_to_bin_result = ""
+        while decimal_part != 0 and len(from_fraction_to_bin_result) < 127:
             decimal_part *= 2
             if decimal_part >= 1:
-                result += "1"
+                from_fraction_to_bin_result += "1"
                 decimal_part -= 1
             else:
-                result += "0"
-        return result if result != "" else "0"
+                from_fraction_to_bin_result += "0"
+        return from_fraction_to_bin_result if from_fraction_to_bin_result != "" else "0"
 
     @staticmethod
     def find_shift_order(binary_int: str, binary_fractional: str) -> str:  # сдвиг считаем
@@ -222,10 +187,10 @@ class BinaryMethods:
     @staticmethod
     def from_decimal_to_float(decimal_num: float) -> str:
         """
-        Перевод полноценного числа в бинарное число с мантиссей
+        Перевод полноценного числа в бинарное число с мантиссой
         """
-        result = ''
-        result = '0' if decimal_num >= 0 else '1'
+        # from_decimal_to_float_result = ''
+        from_decimal_to_float_result = '0' if decimal_num >= 0 else '1'
 
         int_number = BinaryMethods.from_decimal_to_binary(abs(int(decimal_num)))
         int_number = int_number[int_number.find('1'):]
@@ -237,17 +202,17 @@ class BinaryMethods:
             return '0' * 32
 
         shift_order = BinaryMethods.find_shift_order(int_number, fractional_number)[24:]
-        result = result + ' ' + shift_order
+        from_decimal_to_float_result = from_decimal_to_float_result + ' ' + shift_order
 
         mantissa = str(int(int_number + fractional_number))[1:24]
         mantissa = mantissa.ljust(23, '0')
-        result = result + ' ' + mantissa
-        return result
+        from_decimal_to_float_result = from_decimal_to_float_result + ' ' + mantissa
+        return from_decimal_to_float_result
 
     @staticmethod
     def from_binary_remainder_to_decimal(binary_remainder):
         """
-        перевод дробной части бинарного числа в дробную часть 10го числа
+        Перевод дробной части бинарного числа в дробную часть 10го числа
         """
         decimal_remainder = 0
         for i in range(len(binary_remainder)):
@@ -277,11 +242,11 @@ class BinaryMethods:
             whole_part = '1'
             fractional_part = float_num[9:]
 
-        result = float(
+        from_float_to_decimal_result = float(
             str(BinaryMethods.from_binary_to_decimal(whole_part.rjust(32, '0'))) + str(
                 BinaryMethods.from_binary_remainder_to_decimal(fractional_part))[1:])
 
-        return result if float_num[0] == '0' else -result
+        return from_float_to_decimal_result if float_num[0] == '0' else -from_float_to_decimal_result
 
     @staticmethod
     def search_of_initial_arguments(numb_1: str, numb_2: str):
@@ -303,7 +268,7 @@ class BinaryMethods:
     def diff_between_shifts_and_mantissa_additions(numb_1: str, numb_2: str, exp1: int, exp2: int):
         mantissa1 = '1' + numb_1[9:]
         mantissa2 = '1' + numb_2[9:]
-        exp_result = 0
+        # exp_result = 0
         if int(exp1) > int(exp2):
             diff = BinaryMethods.add_binary(list(str(BinaryMethods.from_decimal_to_binary(exp1))),
                                             list(BinaryMethods.get_negative_binary(
@@ -325,10 +290,9 @@ class BinaryMethods:
 
         return mantissa1, mantissa2, exp_result
 
-
     @staticmethod
     def mantissa_addition(sign1: str, sign2: str, mantissa1: str, mantissa2: str, exp_result: int):
-        mantissa_sum = ''
+        # mantissa_sum = ''
         if sign1 == sign2:
             mantissa_sum = BinaryMethods.add_binary(list(mantissa1.rjust(32, '0')), list(mantissa2.rjust(32, '0')))
 
@@ -340,15 +304,12 @@ class BinaryMethods:
                                                     list(BinaryMethods.get_negative_binary(mantissa1.rjust(32, '0'))))
 
         else:
-            mantissa_sum = '0' * 23
-            # может быть опасное место
+            # mantissa_sum = '0' * 23
             return '0' * 32, ...
-        # добавить вариант, когда в результате получается 0
 
         mantissa_sum = mantissa_sum[mantissa_sum.find(
             '1'):]  # [:24] #здесь может быть проблема в том, что по какой-то причине размер мантиссы 24
         addition_shift = len(mantissa_sum) - 24  # проверить, может ли быть отрицательным
-        # решить вопрос с моментом, когда мантиса стала на 1 меньше, и тогда нужно и сдвиг уменьшать, и мантису увеличивать
         if addition_shift < 0:
             mantissa_sum += '0' * abs(addition_shift)
 
@@ -357,6 +318,19 @@ class BinaryMethods:
 
         return mantissa_sum, exp_result
         # print(len(mantissa_sum))
+
+    @staticmethod
+    def define_sign(sign1: str, sign2: str, exp1: int, exp2: int, mantissa1: str, mantissa2: str):
+        if sign1 == sign2:
+            result_sign = sign1
+        else:
+            if exp1 > exp2:
+                result_sign = sign1
+            elif exp1 < exp2:
+                result_sign = sign2
+            else:
+                result_sign = sign2 if int(mantissa1) < int(mantissa2) else sign1
+        return result_sign
 
     @staticmethod
     def binary_float_addition(numb_1: str, numb_2: str) -> str:
@@ -376,15 +350,7 @@ class BinaryMethods:
             return '0' * 32
 
         # определение знака
-        if sign1 == sign2:
-            result_sign = sign1
-        else:
-            if exp1 > exp2:
-                result_sign = sign1
-            elif exp1 < exp2:
-                result_sign = sign2
-            else:
-                result_sign = sign2 if int(mantissa1) < int(mantissa2) else sign1
+        result_sign = BinaryMethods.define_sign(sign1, sign2, exp1, exp2, mantissa1, mantissa2)
 
         shift_result = BinaryMethods.add_binary(list(BinaryMethods.from_decimal_to_binary(exp_result)),
                                                 list('01111111'))  # итоговое значение сдвига
@@ -402,33 +368,25 @@ class BinaryMethods:
         return BinaryMethods.from_float_to_decimal(result)
 
 
+print(f'Сумма двух чисел: {BinaryMethods.add_decimal(-10, 5)}')
+
+print(f'Произведение двух чисел: {BinaryMethods.multiplication_of_numbers(10, 5)}')
+
+print(f'Деление двух чисел: {BinaryMethods.divide_dec(10, -1)}')
+
+print(f'Сумма двух чисел с плавающей точкой: {BinaryMethods.binary_float_addition2(-16.387, 4.0)}')
+
+
+# b = BinaryMethods.from_decimal_to_float(0.0)
+# c = BinaryMethods.from_decimal_to_float(442.5)
+# print(f'полноценного десятичное -> бинарное мантисса: {b}.........{c}', end='\n\n')
 #
-# print(BinaryMethods.from_decimal_to_binary(127))
-# print(BinaryMethods.from_decimal_to_binary(7))
-# print(BinaryMethods.add_decimal(-7, 6))
-# print(BinaryMethods.divide_bin('00000000000000000000000000011100', "00000000000000000000000000000111"))
-# print('decimal: ' + str(BinaryMethods.from_binary_to_decimal('00000000000000000000000001111001')))
-# print(BinaryMethods.divide_dec(-35, 7))
+# print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('0 00000000 00000000000000000000000')))
 #
-# print(BinaryMethods.find_shift_order('0', '0101'))
-# print('дробная десятичного -> дробная бинарного: ' + BinaryMethods.from_fraction_to_bin('0234657'))
-
-b = BinaryMethods.from_decimal_to_float(0.0)
-c = BinaryMethods.from_decimal_to_float(442.5)
-print(f'полноценного десятичное -> бинарное мантисса: {b}.........{c}', end='\n\n')
-
-print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('0 00000000 00000000000000000000000')))
-
-num1 = '0 10000000 00101001111110111110011'  # 2.328
-num2 = '0 00000000 00000000000000000000000'  #
-# num2 = '0 10000111 10111010100000000000000'  # 442.5
-result = BinaryMethods.binary_float_addition(num1,
-                                             num2)  # проблема со сдвигом (если он одинаков) и с отрицательным числом
-print(result)
-print(BinaryMethods.from_float_to_decimal(result))  # 12
-
-print(f'add_2: {BinaryMethods.binary_float_addition2(123.45, 45.278)}')
-
-# "Бланки, заполнить фамилии и распечатать в нужном количестве"
-# Условие с 0
-# 0 10000011 11000011111101111100111
+# num1 = '0 10000000 00101001111110111110011'  # 2.328
+# num2 = '0 00000000 00000000000000000000000'  #
+# # num2 = '0 10000111 10111010100000000000000'  # 442.5
+# result = BinaryMethods.binary_float_addition(num1,
+#                                              num2)  # проблема со сдвигом (если он одинаков) и с отрицательным числом
+# print(result)
+# print(BinaryMethods.from_float_to_decimal(result))  # 12
