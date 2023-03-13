@@ -200,7 +200,7 @@ class BinaryMethods:
                 decimal_part -= 1
             else:
                 result += "0"
-        return result
+        return result if result!= "" else "0"
 
     @staticmethod
     def find_shift_order(binary_int: str, binary_fractional: str) -> str:  # сдвиг считаем
@@ -233,6 +233,9 @@ class BinaryMethods:
         fractional_number = BinaryMethods.from_fraction_to_bin(
             str(decimal_num)[str(decimal_num).find('.') + 1:])
 
+        if int_number == '0' and fractional_number == '0':
+            return '0'*32
+
         shift_order = BinaryMethods.find_shift_order(int_number, fractional_number)[24:]
         result = result + ' ' + shift_order
 
@@ -255,6 +258,9 @@ class BinaryMethods:
     @staticmethod
     def from_float_to_decimal(float_num: str) -> float:
         float_num = float_num.replace(' ', '')
+
+        if float_num == 32*'0':
+            return 0.0
 
         shift = float_num[1:9]
         shift = -BinaryMethods.from_binary_to_decimal(BinaryMethods.add_binary(list('00000000000000000000000001111111'),
@@ -283,6 +289,8 @@ class BinaryMethods:
         num2 = num2.replace(' ', '')
         sign1 = num1[0]
         sign2 = num2[0]
+        if int(num1) == 0 and int(num2) == 0:
+            return '0'*32
 
         # Здесь работа со сдвигом
         exp1 = -BinaryMethods.from_binary_to_decimal(BinaryMethods.add_binary(list('00000000000000000000000001111111'),
@@ -329,6 +337,8 @@ class BinaryMethods:
 
         else:
             mantissa_sum = '0' * 23
+            #может быть опасное место
+            return '0' * 32
         # добавить вариант, когда в результате получается 0
 
         mantissa_sum = mantissa_sum[mantissa_sum.find(
@@ -340,7 +350,7 @@ class BinaryMethods:
 
         mantissa_sum = mantissa_sum[:24]
         exp_result = exp_result + addition_shift
-        print(len(mantissa_sum))
+        #print(len(mantissa_sum))
 
         # определение знака
         if sign1 == sign2:
@@ -380,19 +390,22 @@ class BinaryMethods:
 # print(BinaryMethods.find_shift_order('0', '0101'))
 # print('дробная десятичного -> дробная бинарного: ' + BinaryMethods.from_fraction_to_bin('0234657'))
 
-b = BinaryMethods.from_decimal_to_float(-2.328)
+b = BinaryMethods.from_decimal_to_float(0.0)
 c = BinaryMethods.from_decimal_to_float(442.5)
 print(f'полноценного десятичное -> бинарное мантисса: {b}.........{c}', end='\n\n')
 
-print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('01000001101110000000000000000000')))
+print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('0 00000000 00000000000000000000000')))
 
 num1 = '0 10000000 00101001111110111110011'  # 2.328
-# num2 = '0 10000010 10010111101011100001010'  #
-num2 = '1 10000111 10111010100000000000000'  # 442.5
+num2 = '0 00000000 00000000000000000000000'  #
+#num2 = '0 10000111 10111010100000000000000'  # 442.5
 result = BinaryMethods.binary_float_addition(num1,
                                              num2)  # проблема со сдвигом (если он одинаков) и с отрицательным числом
 print(result)
 print(BinaryMethods.from_float_to_decimal(result))  # 12
+
+
+print(f'add_2: {BinaryMethods.binary_float_addition2(0.0, 0.0)}')
 
 
 
