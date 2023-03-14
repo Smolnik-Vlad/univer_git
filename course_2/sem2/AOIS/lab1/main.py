@@ -1,3 +1,6 @@
+import sys
+
+
 class BinaryMethods:
 
     @staticmethod
@@ -87,6 +90,15 @@ class BinaryMethods:
         b_bits = list(BinaryMethods.from_decimal_to_binary(b))
         add_decimal_result: str = BinaryMethods.add_binary(a_bits, b_bits)
         return BinaryMethods.from_binary_to_decimal(add_decimal_result)
+
+    @staticmethod
+    def calculate_expression(expression: str):
+        first_number, operator, second_number = expression.split()
+        first_number = int(first_number)
+        second_number = int(second_number)
+        if operator == '-':
+            second_number = -second_number
+        return BinaryMethods.add_decimal(first_number, second_number)
 
     @staticmethod
     def positive_multiplication_of_numbers(a: int, b: int) -> int:
@@ -368,25 +380,54 @@ class BinaryMethods:
         return BinaryMethods.from_float_to_decimal(result)
 
 
-print(f'Сумма двух чисел: {BinaryMethods.add_decimal(-10, 5)}')
+class Checker:
 
-print(f'Произведение двух чисел: {BinaryMethods.multiplication_of_numbers(10, 5)}')
+    @staticmethod
+    def check_hardcoded_expression():
+        print(f'Сумма двух чисел: {BinaryMethods.add_decimal(-10, 5)}')
 
-print(f'Деление двух чисел: {BinaryMethods.divide_dec(10, -1)}')
+        expression = '0 - 0'
+        print(f'Решение выражения: {BinaryMethods.calculate_expression(expression)}')
 
-print(f'Сумма двух чисел с плавающей точкой: {BinaryMethods.binary_float_addition2(-16.387, 4.0)}')
+        print(f'Произведение двух чисел: {BinaryMethods.multiplication_of_numbers(10, 5)}')
+
+        print(f'Деление двух чисел: {BinaryMethods.divide_dec(10, -1)}')
+
+        print(f'Сумма двух чисел с плавающей точкой: {BinaryMethods.binary_float_addition2(-16.387, 4.0)}')
+
+    @staticmethod
+    def execute_request():
+        function: str = sys.argv[1]
+        value = sys.argv[2:]
+
+        list_of_functions = {'--expression': BinaryMethods.calculate_expression,
+                             '--mult': BinaryMethods.multiplication_of_numbers,
+                             '--div': BinaryMethods.divide_dec,
+                             '--float_sum': BinaryMethods.binary_float_addition2,
+                             '--get_float': BinaryMethods.from_decimal_to_float,
+                             '--get_decimal_from_float': BinaryMethods.from_float_to_decimal,
+                             '--get_binary_from_decimal': BinaryMethods.from_decimal_to_binary,
+                             '--get_decimal_from_binary': BinaryMethods.from_binary_to_decimal,
+                             }
+
+        try:
+            get_function = list_of_functions[function]
+
+            if function in ['--expression', '--get_decimal_from_float', '--get_decimal_from_binary']:
+                data = value
+
+            elif function in ['--float_sum', '--get_float']:
+                data = list(map(float, value))
+
+            else:
+                data = list(map(int, value))
+
+            print(get_function(*data))
+
+        except KeyError:
+            return f'Неизвестная функция {function}'
 
 
-# b = BinaryMethods.from_decimal_to_float(0.0)
-# c = BinaryMethods.from_decimal_to_float(442.5)
-# print(f'полноценного десятичное -> бинарное мантисса: {b}.........{c}', end='\n\n')
-#
-# print("float->decimal: " + str(BinaryMethods.from_float_to_decimal('0 00000000 00000000000000000000000')))
-#
-# num1 = '0 10000000 00101001111110111110011'  # 2.328
-# num2 = '0 00000000 00000000000000000000000'  #
-# # num2 = '0 10000111 10111010100000000000000'  # 442.5
-# result = BinaryMethods.binary_float_addition(num1,
-#                                              num2)  # проблема со сдвигом (если он одинаков) и с отрицательным числом
-# print(result)
-# print(BinaryMethods.from_float_to_decimal(result))  # 12
+Checker.execute_request()
+
+# Checker.check_hardcoded_expression()
