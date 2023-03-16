@@ -1,0 +1,30 @@
+Для проверки работы программы через консоль необходимо ввести следующую строку:
+python main.py --name_of_function data, где
+
+
+name_of_function - следующие на выбор команды: "expression", "mult", "div", "float_sum", "get_float",
+"get_decimal_from_float", "get_binary_from_decimal", "get_decimal_from_binary".
+
+
+
+data - данные, которые передаются как аргументы в функцию.
+
+Для функций 'expression', 'get_decimal_from_float', 'get_decimal_from_binary' передается в виде строки:
+python main.py --expressions "1 + -2"
+python main.py --get_decimal_from_binary "11111111111111111111111111110110"
+python main.py --get_decimal_from_float "1 10000010 10000000000000000000000"
+
+Для функций 'float_sum', 'get_float' могут передаваться как целочисленные, так и дробные значения:
+python main.py --float_sum  -2 1.75
+python main.py --get_float -12.20
+
+Для всех остальных функций (приведенных ранее) передаются только ЦЕЛОЧИСЛЕННЫЕ значения:
+python main.py --div  -2 2
+python main.py --mult 1 -2
+python main.py --get_binary_from_decimal -10
+
+
+
+Если же хочется проверить через "захардкодженные" значения, то необходимо раскомментировать
+Checker.check_hardcoded_expression() и закомментировать Checker.execute_request(). А в метод check_hardcoded_expression()
+класса Checker передать необходимые параметры.

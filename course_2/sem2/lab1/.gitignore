@@ -1,5 +1,3 @@
-
-
 # PyCharm files
 .idea/
 
@@ -9,4 +7,4 @@
 
 # Cache files
 __pycache__/
-.pytest_cache
+.pytest_cache/
