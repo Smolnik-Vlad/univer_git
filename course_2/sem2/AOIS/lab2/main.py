@@ -1,28 +1,5 @@
 table = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [1, 0, 0], [0, 1, 1], [1, 1, 0], [1, 0, 1], [1, 1, 1]]
-
-
-# def bin_to_int(number):
-#     res = 0
-#     for i in range(1, len(number)):
-#         if number[i] == '1':
-#             res += 2 ** (len(number) - 1 - i)
-#     if number[0] == '1':
-#         res *= -1
-#     return res
-#
-#
-# def bin_to_num(number):
-#     int_part = []
-#     i = 0
-#     while number[i] != '.':
-#         int_part.append(number[i])
-#         i += 1
-#     ans = bin_to_int(int_part)
-#     degree = -1
-#     for j in range(number.index('.') + 1, len(number)):
-#         ans += int(number[j]) * 2 ** degree
-#         degree -= 1
-#     return ans
+operations_priority = {'!': 6, '*': 5, '+': 4, '~': 3, '->': 2, }
 
 
 def decode_formula(current_formula: str) -> list:
@@ -48,49 +25,7 @@ def decode_formula(current_formula: str) -> list:
     return arr
 
 
-def get_priority(operator):
-    if operator == '!':
-        return 6
-    elif operator == '*':
-        return 5
-    elif operator == '+':
-        return 4
-    elif operator == '~':
-        return 2
-    elif operator == '->':
-        return 3
-    else:
-        return 1
-
-
-def conjunction(a, b):
-    a = int(a)
-    b = int(b)
-    return a and b
-
-
-def disjunction(a, b):
-    a = int(a)
-    b = int(b)
-    return a or b
-
-
-def inversion(a):
-    return int(not int(a))
-
-
-def implication(a, b):
-    if int(a) and not int(b):
-        return False
-    else:
-        return True
-
-
-def equivalence(a, b):
-    return a == b
-
-
-def binary_operation_without_inversion(variables, sign):
+def binary_operation(variables, sign):
     a = variables.pop()
     b = variables.pop()
 
@@ -111,12 +46,12 @@ def binary_operation_without_inversion(variables, sign):
 def binary_operation_with_inversion(variables, sign):
     """Функция на проверку отрицания"""
     if sign == '!':
-        return int(inversion(variables.pop()))
+        return int(not int(variables.pop()))
     else:
-        return int(binary_operation_without_inversion(variables, sign))
+        return int(binary_operation(variables, sign))
 
 
-def calculate(formula, variables, signs):
+def binary_calculating(formula, variables, signs):
     stack_variables = []
     stack_signs = []
     for element in formula:
@@ -129,7 +64,9 @@ def calculate(formula, variables, signs):
                 stack_variables.append(binary_operation_with_inversion(stack_variables, stack_signs.pop()))
             stack_signs.pop()
         elif element in signs:
-            while len(stack_signs) > 0 and get_priority(stack_signs[-1]) >= get_priority(element):
+            # while len(stack_signs) > 0 and get_priority(stack_signs[-1]) >= get_priority(element):
+            while len(stack_signs) > 0 and operations_priority.get(stack_signs[-1], 1) >= operations_priority.get(
+                    element, 1):
                 stack_variables.append(binary_operation_with_inversion(stack_variables, stack_signs.pop()))
             stack_signs.append(element)
     while len(stack_signs) != 0:
@@ -139,7 +76,7 @@ def calculate(formula, variables, signs):
 
 def get_stacks_of_signs_and_variables(decoded_formula):
     """
-    получение стеков из знаков и значений
+    Получение стеков из знаков и значений
     """
     stack_sign = list(filter(lambda x: x in ['!', '*', '+', '->', '(', ')', '~'], decoded_formula))
     stack_variables = list(filter(lambda x: x not in ['!', '*', '+', '->', '(', ')', '~'], decoded_formula))
@@ -151,23 +88,6 @@ def get_stacks_of_signs_and_variables(decoded_formula):
     return stack_variables, stack_sign
 
 
-# def truth_table(n):
-#     rows = 2 ** n
-#     table = []
-#     for i in range(rows):
-#         row = []
-#         for j in range(n - 1, -1, -1):
-#             row.append((i >> j) & 1)
-#         table.append(row)
-#     return table
-#
-#
-# # убрать функцию-паразит
-# def build_table(n):
-#     table = truth_table(n)
-#     return table
-#
-
 def replace_variables(formula, column, variables):
     ans = formula.copy()
     for i in range(len(ans)):
@@ -176,11 +96,11 @@ def replace_variables(formula, column, variables):
     return ans
 
 
-def build_answers(formula, stack_signs, stack_variables, table):
+def solution(formula, stack_signs, stack_variables, table):
     answers = []
     for column in table:
         formula_with_numbers = replace_variables(formula, column, stack_variables)
-        ans = calculate(formula_with_numbers, list(map(str, column)), stack_signs)
+        ans = binary_calculating(formula_with_numbers, list(map(str, column)), stack_signs)
         answers.append(ans)
     return answers
 
@@ -192,7 +112,7 @@ def show_table(table: list, result, variables):
         print(f'{i + 1}       {column}     {str(result[i])}')
 
 
-def show_SKNF_form(table, answers, variables):
+def show_sknf_form(table, answers, variables):
     answer = "SKNF Form: "
     for i in range(len(answers)):
         if answers[i] == 0:
@@ -211,7 +131,7 @@ def show_SKNF_form(table, answers, variables):
     print(answer)
 
 
-def show_SDNF_form(table, answers, variables):
+def show_sdnf_form(table, answers, variables):
     answer = "SDNF Form: "
     for i in range(len(answers)):
         if answers[i] == 1:
@@ -230,7 +150,7 @@ def show_SDNF_form(table, answers, variables):
     print(answer)
 
 
-def build_num_form(table, answers):
+def sdnf_sknf_num_form(answers):
     ans1 = []
     ans2 = []
     for i in range(len(answers)):
@@ -254,11 +174,11 @@ def main():
     decoded_formula = decode_formula('((x1+(x2*(!x3)))->((x1~(!x2))))')  #
     stack_variables, stac_signs = get_stacks_of_signs_and_variables(decoded_formula)
 
-    answers = build_answers(decoded_formula, stac_signs, stack_variables, table)
+    answers = solution(decoded_formula, stac_signs, stack_variables, table)
     show_table(table, answers, stack_variables)
-    show_SDNF_form(table, answers, stack_variables)
-    show_SKNF_form(table, answers, stack_variables)
-    build_num_form(table, answers)
+    show_sdnf_form(table, answers, stack_variables)
+    show_sknf_form(table, answers, stack_variables)
+    sdnf_sknf_num_form(answers)
     build_int(answers)
 
 
