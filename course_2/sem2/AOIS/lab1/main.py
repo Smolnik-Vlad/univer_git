@@ -390,7 +390,7 @@ class Checker:
     def check_hardcoded_expression():
         print(f'Сумма двух чисел: {BinaryMethods.add_decimal(-10, 5)}')
 
-        expression = '0 - 0'
+        expression = '8 - 12'
         print(f'Решение выражения: {BinaryMethods.calculate_expression(expression)}')
 
         print(f'Произведение двух чисел: {BinaryMethods.multiplication_of_numbers(10, 5)}')
@@ -432,6 +432,6 @@ class Checker:
             return f'Неизвестная функция {function}'
 
 
-Checker.check_hardcoded_expression()
+#Checker.check_hardcoded_expression()
 
-# Checker.check_hardcoded_expression()
+Checker.execute_request()
