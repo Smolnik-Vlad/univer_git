@@ -7,13 +7,15 @@ class Validate:
     def spell_check(a: str):
         if not a.isalpha():
             raise ValueError("В ФИО присутствуют неверные символы")
+        elif not a.istitle():
+            raise ValueError("ФИО введено не с большой буквы")
 
     @staticmethod
     def check_community_service(service: str):
         if service == '':
-            return 0
-        if not service.isdigit():
-            raise ValueError("Неправильное значение айайай")
+            return None
+        if not service.isdigit() and int(service) < 0:
+            raise ValueError("Неправильное значение: должно быть целочисленное неотрицательное")
         return service
 
     @staticmethod

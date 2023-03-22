@@ -36,6 +36,7 @@ class Student:
     #     """Получить словарь суммы всех часов студентов"""
     #     dict_of_hours={i:j for i, j in cls.__dict_of_students.items()}
 
+
 # new_student = {'student_name': 'Vlad', 'student_group': 121701, 'community_service': {1: 10, 2: 11, 3: 12, 4: 13}}
 #
 # Student.create_new_student(new_student)
