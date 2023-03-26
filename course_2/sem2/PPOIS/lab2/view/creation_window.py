@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.messagebox as mb
 
-from model.model import Student
+from models.models import Student
 
 
 class CreationWindow:
@@ -23,7 +23,7 @@ class CreationWindow:
             a.grid(row=2 + i, column=1)
             self.entries.append(a)
 
-    def save_entry(self):
+    def __save_entry(self):
         dict_of_services = {i + 1: self.entries[i + 2].get() for i in range(10)}
         new_entry = {'student_name': self.entries[0].get(), 'student_group': self.entries[1].get(),
                      'community_service': dict_of_services}
@@ -39,5 +39,8 @@ class CreationWindow:
 
         self.__create_entries_fields()
 
-        tk.Button(self.creation_window, text='Создать новую запись', command=self.save_entry).grid(row=13, column=1)
+        tk.Button(self.creation_window, text='Создать новую запись', command=self.__save_entry).grid(row=13, column=1)
         self.creation_window.mainloop()
+
+
+
