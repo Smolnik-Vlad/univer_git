@@ -37,14 +37,29 @@ class Student:
             cls.list_of_groups.append(new_student.student_group)
 
     @classmethod
+    def set_students_from_file(cls, list_of_students: List[dict]):
+        cls.__dict_of_students = {}
+        cls.__id = 0
+
+
+        for student in list_of_students:
+            student.pop('id')
+            new_student = {'student_name': student.pop('name'),
+                           'student_group': student.pop('group'),
+                           'community_service': {i + 1: list(student.values())[i] for i in
+                                                 range(len(student.values()))}}
+            print("Новый студент: ", new_student)
+            cls.create_new_student(new_student)
+
+    @classmethod
     def get_all_students_in_list(cls):
         students_list = []
         for student in cls.__dict_of_students.values():
-            entry_student:dict = {}
+            entry_student: dict = {}
             entry_student['id'] = str(student.id)
             entry_student['name'] = student.student_name
             entry_student['group'] = student.student_group
-            community_services:list = list(student.community_service.values())
+            community_services: list = list(student.community_service.values())
             for i in range(len(community_services)):
                 entry_student[f'community_service_{i}'] = community_services[i]
             students_list.append(entry_student)

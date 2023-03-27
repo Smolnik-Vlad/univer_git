@@ -3,6 +3,8 @@ from tkinter import filedialog
 from xml.sax.handler import ContentHandler
 import xml.etree.ElementTree as ET
 
+from models.models import Student
+
 
 class XMLReader(ContentHandler):
 
@@ -24,6 +26,4 @@ class XMLReader(ContentHandler):
     def reader():
         file_path = filedialog.askopenfilename()
         students = XMLReader.__reading_parser(file_path)
-        print(students)
-        return students
-        #return handler.dictionary
+        Student.set_students_from_file(students)

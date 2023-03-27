@@ -11,9 +11,7 @@ class XMLWriter:
 
     @staticmethod
     def __writing_parser():
-        print("checked")
         all_students = Student.get_all_students_in_list()
-        print('all students: ', all_students)
 
         root = ET.Element("students")
 
