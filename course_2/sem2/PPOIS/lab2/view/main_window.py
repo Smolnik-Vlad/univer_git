@@ -5,6 +5,8 @@ import tkinter.messagebox as mb
 from tkinter import ttk, BOTH, END, NW
 from typing import Dict
 
+from file_handing.xml_reader import XMLReader
+from file_handing.xml_writer import XMLWriter
 from models.models import Student
 from view.creation_window import CreationWindow
 from view.filtering_window import FilteringWindow
@@ -29,9 +31,9 @@ class MainWindow:
         actions_menu.add_command(label="Удалить отфильтрованные записи", command=self.__delete_sorted_entries)
 
         file_menu = tk.Menu(self.__main_window)
-        file_menu.add_command(label="открыть...")
-        file_menu.add_command(label="сохранить")
-        file_menu.add_command(label="сохранить как...")
+        file_menu.add_command(label="открыть...", command=XMLReader.reader)
+        file_menu.add_command(label="сохранить", command=XMLWriter.writer)
+        file_menu.add_command(label="сохранить как...", command=XMLWriter.writer_as)
         file_menu.add_separator()
         file_menu.add_command(label="Выход", command=sys.exit)
 

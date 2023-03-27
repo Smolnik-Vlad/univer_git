@@ -13,7 +13,7 @@ class Validate:
     @staticmethod
     def check_community_service(service: str):
         if service == '':
-            return 0
+            return "0"
         if not service.isdigit() and int(service) < 0:
             raise ValueError("Неправильное значение: должно быть целочисленное неотрицательное")
         return service

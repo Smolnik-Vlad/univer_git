@@ -9,7 +9,7 @@ class Student:
     list_of_groups: List[int] = ['none']
     __dict_of_students: dict = {}  # Dict['str': Student]
     __validated_filters: dict = {'student_name': '', 'student_group': 'none', 'low_limit': '', 'high_limit': ''}
-    __dict_of_filtered_students: dict = {} # Dict['str': Student]
+    __dict_of_filtered_students: dict = {}  # Dict['str': Student]
     __paginated_dict_of_filtered_students: Dict[int, dict] = {}
     __current_page: int = 1
 
@@ -37,8 +37,19 @@ class Student:
             cls.list_of_groups.append(new_student.student_group)
 
     @classmethod
-    def get_all_students(cls):
-        return cls.__dict_of_students
+    def get_all_students_in_list(cls):
+        students_list = []
+        for student in cls.__dict_of_students.values():
+            entry_student:dict = {}
+            entry_student['id'] = str(student.id)
+            entry_student['name'] = student.student_name
+            entry_student['group'] = student.student_group
+            community_services:list = list(student.community_service.values())
+            for i in range(len(community_services)):
+                entry_student[f'community_service_{i}'] = community_services[i]
+            students_list.append(entry_student)
+
+        return students_list
 
     @classmethod
     def set_up_filters(cls, filters: dict):
