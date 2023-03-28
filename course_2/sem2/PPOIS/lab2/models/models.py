@@ -231,3 +231,4 @@ class Student:
                 cls.__dict_of_students.pop(student)
                 deleted_students.append(student)
         mb.showinfo("Удаленные студенты", f"Имена удаленных студентов: {', '.join(deleted_students)}")
+
