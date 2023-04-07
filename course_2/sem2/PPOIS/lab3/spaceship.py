@@ -20,7 +20,7 @@ class SpaceShip(pygame.sprite.Sprite):
         return pygame.transform.scale(image, (70, 70))
 
     def __init__(self, x: int, y: int, speed: int, sprites):
-        super(SpaceShip, self).__init__()
+        super().__init__()
         self.image = self.__class__.__load_image()
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -46,8 +46,6 @@ class SpaceShip(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         bullet_fired: bool = args['bullet_fired']
 
-        angle_radians = math.radians(self.angle)
-
         delta_x = self.speed * math.cos(math.radians(self.angle))
         delta_y = self.speed * -math.sin(math.radians(self.angle))
 
@@ -58,7 +56,6 @@ class SpaceShip(pygame.sprite.Sprite):
         if keys[self.__class__.D_KEY]:
             self.angle -= self.rotation_speed
 
-
         if keys[self.__class__.W_KEY]:
             self.rect.x += delta_x
             self.rect.y += delta_y
@@ -67,11 +64,12 @@ class SpaceShip(pygame.sprite.Sprite):
             self.rect.x -= delta_x
             self.rect.y -= delta_y
 
-        if keys[self.__class__.SPACE_KEY] and bullet_fired:
+        if keys[self.__class__.SPACE_KEY] and bullet_fired and Bullet.bullet_amount < 6:
             print(bullet_fired)
             bullet = Bullet(self.rect.center, self.angle)
             self.sprites.add(bullet)
+            Bullet.bullet_amount += 1
 
         self.__teleporting_to_the_opposite_site(surface_size)
-        self.image = pygame.transform.rotate(self.__class__.__load_image(), self.angle-90)
+        self.image = pygame.transform.rotate(self.__class__.__load_image(), self.angle - 90)
         self.rect = self.image.get_rect(center=self.rect.center)

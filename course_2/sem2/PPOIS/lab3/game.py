@@ -3,6 +3,7 @@ from collections import defaultdict
 
 import pygame
 
+from asteroid import Asteroid
 from spaceship import SpaceShip
 
 
@@ -48,8 +49,14 @@ class Game:
 
             list_of_args_for_stripe = {'surface_size': self.surface.get_size(), 'bullet_fired': bullet_fired}
 
-            self.sprites.update(list_of_args_for_stripe)
+            # for i in range(6):
+            if Asteroid.asteroids_amount < 10:
+                asteroid = Asteroid(self.surface.get_size())
+                self.sprites.add(asteroid)
+                Asteroid.asteroids_amount += 1
 
+
+            self.sprites.update(list_of_args_for_stripe)
             self.surface.blit(self.background_image, (0, 0))
             self.__set_background_size()
             self.sprites.draw(self.surface)
