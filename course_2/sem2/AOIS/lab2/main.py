@@ -1,4 +1,4 @@
-table = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [1, 0, 0], [0, 1, 1], [1, 1, 0], [1, 0, 1], [1, 1, 1]]
+table = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0],  [1, 0, 1], [1, 1, 0], [1, 1, 1]]
 operations_priority = {'!': 6, '*': 5, '+': 4, '~': 3, '->': 2, }
 
 
@@ -89,19 +89,20 @@ def get_stacks_of_signs_and_variables(decoded_formula):
 
 
 def replace_variables(formula, column, variables):
-    ans = formula.copy()
-    for i in range(len(ans)):
-        if ans[i] in variables:
-            ans[i] = str(column[variables.index(ans[i])])
-    return ans
+    bit = formula.copy()
+    for i in range(len(bit)):
+        if bit[i] in variables:
+            bit[i] = str(column[variables.index(bit[i])])
+    return bit
+
 
 
 def solution(formula, stack_signs, stack_variables, table):
     answers = []
     for column in table:
         formula_with_numbers = replace_variables(formula, column, stack_variables)
-        ans = binary_calculating(formula_with_numbers, list(map(str, column)), stack_signs)
-        answers.append(ans)
+        bit = binary_calculating(formula_with_numbers, list(map(str, column)), stack_signs)
+        answers.append(bit)
     return answers
 
 
@@ -155,23 +156,35 @@ def sdnf_sknf_num_form(answers):
     ans2 = []
     for i in range(len(answers)):
         if not answers[i]:
-            ans1.append(i + 1)
+            ans1.append(i)
         else:
-            ans2.append(i + 1)
+            ans2.append(i)
     print('SKNF_indexes: ', ', '.join(map(str, ans1)))
     print('SDNF_indexes: ', ', '.join(map(str, ans2)))
+
+def from_binary_to_decimal(bin_str: str) -> int:
+    # перевод из двоичного представления в двоичное представление
+    n = len(bin_str)
+    s = 0
+    for i in range(n):
+        if bin_str[i] == '1':
+            s += 2 ** (n - i - 1)
+    if bin_str[0] == '1':
+        s -= 2 ** n
+    return s
+
 
 
 def build_int(answers):
     answers_copy = answers.copy()
-    answers_copy.append('.')
-    ans = ''.join(map(str, answers_copy))
-    print(f'Index form: {ans}')
-    return ans
+    bit_form = ''.join(map(str, answers_copy))
+    decimal_form = from_binary_to_decimal(bit_form)
+    print(f'Index form: {decimal_form}')
+    return decimal_form
 
 
 def main():
-    decoded_formula = decode_formula('((x1+(x2*(!x3)))->((x1~(!x2))))')  #
+    decoded_formula = decode_formula('(((!x1)+(!x2*x3))->((x1~(!x3))))')  #
     stack_variables, stac_signs = get_stacks_of_signs_and_variables(decoded_formula)
 
     answers = solution(decoded_formula, stac_signs, stack_variables, table)
