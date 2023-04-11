@@ -178,3 +178,4 @@ class Game:
                 pygame.mixer.music.load(current_song)
                 pygame.mixer.music.play(-1)
         pygame.time.delay(1000)  # задержка в 1 секунду
+        return self.spaceship.game_points
