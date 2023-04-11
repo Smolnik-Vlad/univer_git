@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import time
 from json import JSONDecodeError
 from typing import List, Dict
 
@@ -80,6 +81,7 @@ class EnterNameMenu:
 
     def run(self):
         done = False
+        self.last_update_time = 0
         while not done:
             self.time_delta = pygame.time.Clock().tick(60) / 1000.0
             for event in pygame.event.get():
@@ -101,13 +103,26 @@ class EnterNameMenu:
                         if event.ui_element == self.quit_button:
                             done = True
 
-            self.screen.blit(self.background_image, (0, 0))
-            self.manager.update(self.time_delta)
-            self.manager.draw_ui(self.screen)
-            pygame.display.update()
-            self.screen.blit(self.text_surface, self.text_rect)
-            pygame.display.flip()
+            # self.screen.blit(self.background_image, (0, 0))
+            # self.manager.update(self.time_delta)
+            # self.manager.draw_ui(self.screen)
+            # pygame.display.update()
+            # self.screen.blit(self.text_surface, self.text_rect)
+            # pygame.display.flip()
+
+            current_time = time.time()
+            if current_time - self.last_update_time > 0.01:  # если прошла 1 секунда
+                self.screen.blit(self.background_image, (0, 0))
+                self.manager.update(self.time_delta)
+                self.manager.draw_ui(self.screen)
+                pygame.display.update()
+                self.last_update_time = current_time  # обновляем время последнего обновления экрана
+
+                self.screen.blit(self.text_surface, self.text_rect)  # отрисовываем текст
+                pygame.display.flip()
+
         self.screen.blit(self.background_image, (0, 0))
+
 
         
         return self.name
