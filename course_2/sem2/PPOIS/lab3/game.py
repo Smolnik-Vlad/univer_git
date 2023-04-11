@@ -25,6 +25,7 @@ class Game:
         self.background_image = pygame.image.load(back_image_filename)  # задаем картинку
         self.frame_rate = frame_rate  # задаем частоту кадров
         self.game_over = False
+        Asteroid.asteroids_amount = 0
         self.sprites = pygame.sprite.Group()  # объекты игры
         self.spaceship = SpaceShip(250, 250, 7, self.sprites)
         self.sprites.add(self.spaceship)
@@ -34,7 +35,7 @@ class Game:
         pygame.mixer.pre_init(44100, 16, 2, 4096)  # активируем модуль для взаимодействия со звуком
         pygame.init()  # сам модуль
         pygame.font.init()  # работа со шрифтами
-        self.surface = pygame.display.set_mode((width, height), pygame.RESIZABLE)  # отображение дисплея
+        self.surface = pygame.display.set_mode((width, height))  # отображение дисплея
         pygame.display.set_caption(caption)
         self.clock = pygame.time.Clock()
         self.life_image = self.__load_image()
@@ -45,6 +46,7 @@ class Game:
                       './sounds/music/Kanushina.mp3',
                       './sounds/music/Stoyat_devchenki.mp3',
                       ]
+        self.current_song = None
 
 
     def __draw_lives(self):
@@ -129,6 +131,9 @@ class Game:
                 self.bullet_fired = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_F6:
                 current_song = random.choice(self.songs)
+                while current_song == self.current_song:
+                    current_song = random.choice(self.songs)
+                self.current_song = current_song
                 pygame.mixer.music.load(current_song)
                 pygame.mixer.music.set_volume(0.5)
                 pygame.mixer.music.play(-1)
@@ -136,9 +141,11 @@ class Game:
     def run(self):
 
         # загружаем и воспроизводим песню
-        pygame.mixer.music.load('./sounds/music/Geoffplaysguitar_Zemlyane_Atomic_Heart_Trava_u_Doma.mp3')
-        pygame.mixer.music.set_volume(0.5)
-        pygame.mixer.music.play(-1)  # -1 для зацикливания музыки
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.load('./sounds/music/Geoffplaysguitar_Zemlyane_Atomic_Heart_Trava_u_Doma.mp3')
+            self.current_song = './sounds/music/Geoffplaysguitar_Zemlyane_Atomic_Heart_Trava_u_Doma.mp3'
+            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.play(-1)  # -1 для зацикливания музыки
         while not self.game_over:
             self.bullet_fired = False
             self.__check_events()

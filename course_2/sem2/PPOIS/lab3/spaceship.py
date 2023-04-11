@@ -117,5 +117,6 @@ class SpaceShip(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.rect.center)
         self.collision_rect.center = self.rect.center
 
+
         self.__padding_check()
 
