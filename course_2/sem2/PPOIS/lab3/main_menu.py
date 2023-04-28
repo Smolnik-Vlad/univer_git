@@ -103,12 +103,6 @@ class EnterNameMenu:
                         if event.ui_element == self.quit_button:
                             done = True
 
-            # self.screen.blit(self.background_image, (0, 0))
-            # self.manager.update(self.time_delta)
-            # self.manager.draw_ui(self.screen)
-            # pygame.display.update()
-            # self.screen.blit(self.text_surface, self.text_rect)
-            # pygame.display.flip()
 
             current_time = time.time()
             if current_time - self.last_update_time > 0.01:  # если прошла 1 секунда
@@ -123,8 +117,6 @@ class EnterNameMenu:
 
         self.screen.blit(self.background_image, (0, 0))
 
-
-        
         return self.name
 
 
