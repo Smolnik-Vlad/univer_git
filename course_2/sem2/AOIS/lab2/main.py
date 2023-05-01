@@ -369,7 +369,7 @@ def minimizaztion_by_raschet_method(sdnf, sknf):
     check_implicants_sdnf_sknf(sknf_intersection_value, True)
 
 def main():
-    decoded_formula = decode_formula('(((!x1)+(!x2*x3))->((x1~(!x3))))')  #(((!x1)+(!x2*x3))->((x1~(!x3))))
+    decoded_formula = decode_formula('(!((x1+x2)*x3))')  #(((!x1)+(!x2*x3))->((x1~(!x3))))
     #(!((a+b)*c))
     stack_variables, stac_signs = get_stacks_of_signs_and_variables(decoded_formula)
 
@@ -379,7 +379,7 @@ def main():
     sknf = show_sknf_form(table, answers, stack_variables)
     sdnf_sknf_num_form(answers)
     build_int(answers)
-    minimizaztion_by_raschet_method(sdnf, sknf)
+    # minimizaztion_by_raschet_method(sdnf, sknf)
 
 
 
