@@ -256,27 +256,27 @@ class AnotherOperations:
                      y_table]
 
         # print(sdnf_list)
-        McCluskyMethod().get_sdnf_answer(sdnf_list[0])
-        McCluskyMethod().get_sdnf_answer(sdnf_list[1])
-        McCluskyMethod().get_sdnf_answer(sdnf_list[2])
-        McCluskyMethod().get_sdnf_answer(sdnf_list[3])
-        #
-        # full_list_of_minimized_functions = [
-        #     list(map(lambda x: McCluskyMethod().get_sdnf_answer(x, pr=False), list_of_sdnf)) for
-        #     list_of_sdnf in full_sdnf_list]
-        #
-        # full_list_of_minimized_functions = list(
-        #     map(lambda list_of_minimized_functions: sorted(list_of_minimized_functions, key=len),
-        #         full_list_of_minimized_functions))
-        #
-        # minimal_sizes = list(map(lambda sizes: len(sizes[0]), full_list_of_minimized_functions))
-        # for i in range(len(full_list_of_minimized_functions)):
-        #     full_list_of_minimized_functions[i] = list(
-        #         filter(lambda x: len(x) == minimal_sizes[i], full_list_of_minimized_functions[i]))
-        #
-        # # full_list_of_minimized_functions = list(map(lambda x: list(filter())))
-        #
-        # full_list_of_minimized_functions
+        # McCluskyMethod().get_sdnf_answer(sdnf_list[0])
+        # McCluskyMethod().get_sdnf_answer(sdnf_list[1])
+        # McCluskyMethod().get_sdnf_answer(sdnf_list[2])
+        # McCluskyMethod().get_sdnf_answer(sdnf_list[3])
+
+        full_list_of_minimized_functions = [
+            list(map(lambda x: McCluskyMethod().get_sdnf_answer(x, pr=False), list_of_sdnf)) for
+            list_of_sdnf in full_sdnf_list]
+
+        full_list_of_minimized_functions = list(
+            map(lambda list_of_minimized_functions: sorted(list_of_minimized_functions, key=len),
+                full_list_of_minimized_functions))
+
+        minimal_sizes = list(map(lambda sizes: len(sizes[0]), full_list_of_minimized_functions))
+        for i in range(len(full_list_of_minimized_functions)):
+            full_list_of_minimized_functions[i] = list(
+                filter(lambda x: len(x) == minimal_sizes[i], full_list_of_minimized_functions[i]))
+
+        # full_list_of_minimized_functions = list(map(lambda x: list(filter())))
+
+        full_list_of_minimized_functions
 
 
 AnotherOperations.lab4(table, borrows, differences, x_table, y_table, y_table_for_showing)
