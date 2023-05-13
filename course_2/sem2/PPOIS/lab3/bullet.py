@@ -6,11 +6,12 @@ import pygame.sprite
 
 class Bullet(pygame.sprite.Sprite):
     bullet_amount: int = 0
+    increase = 0
 
     @staticmethod
     def __load_image():
         image = pygame.image.load('./images/bullets/bullet_1.png')
-        return pygame.transform.scale(image, (50, 50))
+        return pygame.transform.scale(image, (50 + Bullet.increase, 50 + Bullet.increase))
 
     def __init__(self, pos, angle):
         bullet_sounds = ['./sounds/bullet_sounds/bullet_sound_1.wav',
