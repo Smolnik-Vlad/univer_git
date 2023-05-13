@@ -11,7 +11,7 @@ trigger_functions = ['H1', 'H2', 'H3']
 input_vars = ['q1', 'q2', 'q3', 'V']
 
 
-def get_truth_table(n):
+def get_table(n):
     rows = 2 ** n
     table = []
 
@@ -24,11 +24,7 @@ def get_truth_table(n):
     return table
 
 
-def build_table(count: int) -> Dict[str, List[List[int]]]:
-    table = get_truth_table(count)
-    inputs_table = []
-    excitation_table = []
-    print(table)
+def fill_tables(inputs_table, excitation_table, table):
     for i in range(len(table)):
         for j in range(2):
             if j == 0:
@@ -46,31 +42,34 @@ def build_table(count: int) -> Dict[str, List[List[int]]]:
             else:
                 row.append(0)
         excitation_table.append(row)
+
+
+def build_truth_table(count: int) -> Dict[str, List[List[int]]]:
+    table = get_table(count)
+    table_for_input = []
+    table_for_excitation = []
+    print(table)
+
+    fill_tables(table_for_input, table_for_excitation, table)
+
     print("TRANSITION TABLE")
     print(" ".join(pre_tacts), fsm_signal, " ".join(post_tacts),
           " ".join(trigger_functions))
-    for i in range(len(inputs_table)):
-        print("  ".join(map(str, inputs_table[i])), "", "  ".join(map(str, excitation_table[i])))
-    table_with_only_vars = []
-    for i in range(len(inputs_table)):
-        table_with_only_vars.append(inputs_table[i][:4])
-    return {"table_with_only_vars": table_with_only_vars, "excitation_table": excitation_table}
+    for i in range(len(table_for_input)):
+        print("  ".join(map(str, table_for_input[i])), "", "  ".join(map(str, table_for_excitation[i])))
+    only_wars_table = []
+    for i in range(len(table_for_input)):
+        only_wars_table.append(table_for_input[i][:4])
+    return {"table_with_only_vars": only_wars_table, "excitation_table": table_for_excitation}
 
 
-
-
-def get_h1_h2_h3(excitation_table):
-    h1 = list(map(lambda x: x[0], excitation_table))
-    h2 = list(map(lambda x: x[1], excitation_table))
-    h3 = list(map(lambda x: x[2], excitation_table))
-    return h1,  h2,  h3
-
-
-def minimize_h1_h2_h3(table_with_only_vars, excitation_table, input_vars):
-    h1, h2, h3 = get_h1_h2_h3(excitation_table)
-    h1_sdnf = build_sdnf(table_with_only_vars, h1, input_vars)
-    h2_sdnf = build_sdnf(table_with_only_vars, h2, input_vars)
-    h3_sdnf = build_sdnf(table_with_only_vars, h3, input_vars)
+def lab5_minimization_h1_h2_h3(vars_table, table_for_excitation, vars):
+    h1 = list(map(lambda x: x[0], table_for_excitation))
+    h2 = list(map(lambda x: x[1], table_for_excitation))
+    h3 = list(map(lambda x: x[2], table_for_excitation))
+    h1_sdnf = build_sdnf(vars_table, h1, vars)
+    h2_sdnf = build_sdnf(vars_table, h2, vars)
+    h3_sdnf = build_sdnf(vars_table, h3, vars)
 
     min_obj = McCluskyMethod()
     print('H1:', min_obj.get_sdnf_answer(h1_sdnf))
@@ -78,6 +77,6 @@ def minimize_h1_h2_h3(table_with_only_vars, excitation_table, input_vars):
     print('H3:', min_obj.get_sdnf_answer(h3_sdnf))
 
 
-tables = build_table(3)
+tables = build_truth_table(3)
 
-minimize_h1_h2_h3(tables['table_with_only_vars'], tables['excitation_table'], input_vars)
+lab5_minimization_h1_h2_h3(tables['table_with_only_vars'], tables['excitation_table'], input_vars)
