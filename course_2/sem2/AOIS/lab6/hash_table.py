@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import  List
 
 
 class Node:
@@ -8,7 +8,7 @@ class Node:
 
 
 class HashTable:
-    def __init__(self, size_of_table=20):
+    def __init__(self, size_of_table=2):
         self.__size_of_table = size_of_table
         self.__table: List[List[Node]] = [None] * size_of_table
 
@@ -67,9 +67,3 @@ class HashTable:
                     break
         else:
             raise KeyError('No such key')
-
-
-a = HashTable(25)
-# a['hi'] = 'nigga'
-# a['hi'] = 'fuck'
-# a.remove('hi')

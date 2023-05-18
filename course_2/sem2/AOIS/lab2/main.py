@@ -113,46 +113,6 @@ def show_table(table: list, result, variables):
         print(f'{i + 1}       {column}     {str(result[i])}')
 
 
-# def show_sknf_form(table, answers, variables):
-#     answer = ""
-#     for i in range(len(answers)):
-#         if answers[i] == 0:
-#             answer += " ("
-#             for j in range(len(table[i])):
-#                 if table[i][j] == 1:
-#                     answer += f"!{variables[j]}"
-#                     if j != len(table[i]) - 1:
-#                         answer += " + "
-#                 elif table[i][j] == 0:
-#                     answer += variables[j]
-#                     if j != len(table[i]) - 1:
-#                         answer += " + "
-#             answer += ") *"
-#     answer = answer[:-2]
-#     print(f'SKNF form: {answer}')
-#     return answer
-#
-
-# def show_sdnf_form(table, answers, variables):
-#     answer = ""
-#     sdnf = []
-#     for i in range(len(answers)):
-#         if answers[i] == 1:
-#             answer += " ("
-#             for j in range(len(table[i])):
-#                 if table[i][j] == 0:
-#                     answer += f"!{variables[j]}"
-#                     if j != len(table[i]) - 1:
-#                         answer += " * "
-#                 elif table[i][j] == 1:
-#                     answer += variables[j]
-#                     if j != len(table[i]) - 1:
-#                         answer += " * "
-#             answer += ") +"
-#     answer = answer[:-2]
-#     print(f'SDNF Form: {answer}')
-#     return answer
-
 def show_sdnf_form(table, answers, variables):
     answer = ""
     sdnf = []
