@@ -255,7 +255,7 @@ class AnotherOperations:
         sdnf_list = [AnotherOperations.show_sdnf_form(x_table, i, ['x1', 'x2', 'x3', 'x4', 'y1'], False) for i in
                      y_table]
 
-        print(sdnf_list)
+        # print(sdnf_list)
         McCluskyMethod().get_sdnf_answer(sdnf_list[0])
         McCluskyMethod().get_sdnf_answer(sdnf_list[1])
         McCluskyMethod().get_sdnf_answer(sdnf_list[2])
