@@ -93,21 +93,80 @@ class AccosiativeMemoryTable:
             print("Could not be")
 
     def get_full_list_of_words(self):
-        #В методе можно получаить нормальный список !
+        # В методе можно получаить нормальный список !
         list_of_words = [self.get_choosen_word(i) for i in range(self.table_size)]
         self.normal_table = list_of_words
         return list_of_words
 
+    def f1(self, elemetns: List[list]):
+        result = list(map(lambda x: 1 if x[0] and x[1] else 0, list(zip(elemetns[0], elemetns[1]))))
+        return result
+
+    def f14(self, elements: List[list]):
+        result = self.f1(elements)
+        result = [int(not x) for x in result]
+        return result
+
+    def f3(self, elements: List[list]):
+        return elements[0]
+
+    def f12(self, elements: List[list]):
+        res = [int(not x) for x in elements[0]]
+        return res
+
+    def logical_function(self, func: str, elements: List[list]):
+        operations = {'f1': self.f1,
+                      'f14': self.f14,
+                      'f3': self.f3,
+                      'f12': self.f12}
+        return operations[func](elements)
+
+    def arithmetics(self, V: List[int]):
+        results = list()
+        list_of_all_words = self.get_full_list_of_words()
+        suitable_words = list(filter(lambda x: x[:3] == V, list_of_all_words))
+        for word in suitable_words:
+            A, B = word[3:7], word[7:11]
+            results.append(word[:11] + self.__sum_of_parts_of_words(A, B))
+
+        results = dict(enumerate(results))
+        return results
+
+    def __sum_of_parts_of_words(self, word1, word2):
+
+        el1 = [int(x) for x in word1]
+        el2 = [int(x) for x in word2]
+        result = ''
+        carry = 0
+        while len(el1) and len(el2):
+            digital1 = el1.pop()
+            digital2 = el2.pop()
+            res = int(digital1 ^ digital2 ^ carry)
+            result = str(res) + result
+            carry = int((digital1 and digital2) or (digital1 ^ digital2) and carry)
+        result = str(carry) + result
+        return list(map(int, result))
+
 
 if __name__ == '__main__':
-    a = AccosiativeMemoryTable(6)
-    list_of_words = AccosiativeMemoryTable.get_random_words(6)
+    a = AccosiativeMemoryTable(16)
+    list_of_words = AccosiativeMemoryTable.get_random_words(16)
     print(f'<Список слов: {list_of_words}>')
-    for i in range(6):
+    for i in range(16):
         a.create_new_entry(list_of_words[i], i)
     print(a)
 
     print('________________________________________________________________')
-    print(a.get_choosen_word(6))
-    print(a.get_full_list_of_words())
-    print(a.find_the_closest_value([0, 1, 0, 1, 0, 1], below=False))
+    print(f'Выбранный элемент: {a.get_choosen_word(5)}')
+    print(f'Целый элемент: {a.get_full_list_of_words()}')
+    print(f'Наиближайший: {a.find_the_closest_value([0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0], below=False)}')
+
+    print('logical functions')
+    functions = ['f1', 'f14', 'f3', 'f12']
+    print(f'f1: {a.logical_function(functions[0], [a.get_full_list_of_words()[0], a.get_full_list_of_words()[1]])}')
+    print(f'f14: {a.logical_function(functions[1], [a.get_full_list_of_words()[0], a.get_full_list_of_words()[1]])}')
+    print(f'f3: {a.logical_function(functions[2], [a.get_full_list_of_words()[0]])}')
+    print(f'f12: {a.logical_function(functions[3], [a.get_full_list_of_words()[0]])}')
+
+    print('sum')
+    print(a.arithmetics([1, 0, 1]))
