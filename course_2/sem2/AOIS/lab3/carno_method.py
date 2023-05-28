@@ -1,10 +1,9 @@
-class McCluskyMethod:
+class CarnoMethod:
 
     def __get_small_terms(self, sdnf_sknf):
         sdnf_sknf = list(map(lambda x: x[:], sdnf_sknf))
         single_parts = []
         while self.__get_vars_count(sdnf_sknf[0]) > 1:
-            #Здесь проходим все время по sdnf_sknf до того момента, пока не сократим до самого конца
             reduced_elements = []
             for i in range(len(sdnf_sknf)):
                 self.__check(i, reduced_elements, sdnf_sknf, single_parts)
@@ -67,7 +66,6 @@ class McCluskyMethod:
         if not same and not self.__similarity_check(single_parts, reduce_parts[index]):
             single_parts.append(reduce_parts[index])
 
-
     @staticmethod
     def __compare_two_terms(term_1, term_2):
         count = 0
@@ -82,9 +80,22 @@ class McCluskyMethod:
                     return False
         return True
 
-    def __build_mcklasky_table(self, sdnf_or_sknf):
-        """Создание таблицы мак-класки"""
+    def get_normal_table_cart(self, table, final_terms, list_of_small_terms):
+        for i in range(len(table[0])):
+            truth_count = 0
+            index_of_truth = 0
+            for j in range(len(table)):
+                if table[j][i]:
+                    truth_count += 1
+                    index_of_truth = j
+            if truth_count == 1 and not self.__similarity_check(final_terms, list_of_small_terms[index_of_truth]):
+                final_terms.append([list_of_small_terms[index_of_truth]])
 
+    def get_result_by_carno(self, table, final_terms, list_of_small_terms):
+        self.get_normal_table_cart(table, final_terms, list_of_small_terms)
+        return self.__ged_minimized_terms(final_terms)
+
+    def __build_table_for_resolving(self, sdnf_or_sknf):
         mcklasky_table = []
         small_terms = self.__get_small_terms(sdnf_or_sknf)
         full_terms = list(map(lambda x: x[:], sdnf_or_sknf))
@@ -94,6 +105,20 @@ class McCluskyMethod:
                 small_term_in_full_term.append(self.__include_check(i, j))
             mcklasky_table.append(small_term_in_full_term)
         return mcklasky_table
+
+    def empty_table_full(self, table):
+        table = table[:]
+        self.empty_table = []
+        try:
+            for i in range(len(table)):
+                for j in range(len(i)):
+                    self.empty_table.append(table[j:i])
+
+            if self.empty_table:
+                a = self.empty_table[0][0]
+
+        except:
+            pass
 
     @staticmethod
     def __ged_minimized_terms(terms):
@@ -105,20 +130,10 @@ class McCluskyMethod:
 
     def solution(self, sdnf_or_sknf):
         final_terms = []
-        table = self.__build_mcklasky_table(sdnf_or_sknf)
+        table = self.__build_table_for_resolving(sdnf_or_sknf)
         list_of_small_terms = self.__get_small_terms(sdnf_or_sknf)
-        for i in range(len(table[0])):
-            truth_count = 0
-            index_of_truth = 0
-            for j in range(len(table)):
-                if table[j][i]:
-                    truth_count += 1
-                    index_of_truth = j
-            if truth_count == 1 and not self.__similarity_check(final_terms, list_of_small_terms[index_of_truth]):
-                final_terms.append([list_of_small_terms[index_of_truth]])
-        return self.__ged_minimized_terms(final_terms)
-
-
+        self.empty_table_full(table)
+        return self.get_result_by_carno(final_terms=final_terms, table=table, list_of_small_terms=list_of_small_terms)
 
     def get_sdnf_answer(self, sdnf):
         terms = self.solution(sdnf)
@@ -148,12 +163,10 @@ class McCluskyMethod:
         return answer
 
 
-# a = McCluskyMethod()
-# sdnf = a.solution([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
-# print(sdnf)
-# c = a.get_sdnf_answer([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
-# print('sDNF:', c)
-# d = a.get_sknf_answer([['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
-# print('sKNF: ', d)
-
-# print(sdnf)
+a = CarnoMethod()
+sdnf = a.solution([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
+print(sdnf)
+c = a.get_sdnf_answer([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
+print('sDNF:', c)
+d = a.get_sknf_answer([['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
+print('sKNF: ', d)
