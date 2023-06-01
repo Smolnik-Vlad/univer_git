@@ -1,273 +1,237 @@
-class RaschMethod:
+import random
 
-    @staticmethod
-    def __find_rasch_results(res, sdnf_func_part):
-        if not res:
-            return False
-        for i in range(len(res)):
-            flag = True
-            for j in range(len(res[i])):
-                if res[i][j] != sdnf_func_part[j]:
-                    flag = False
-            if flag:
-                return True
-        return False
 
-    @staticmethod
-    def __compare_two_terms(term_1, term_2):
-        count = 0
-        for i in range(len(term_1)):
-            if term_1[i] == term_2[i]:
-                pass
-            elif not (term_1[i] in term_2[i] or term_2[i] in term_1[i]):
-                return False
+def sdnf_intersect(sdnf):
+    intersection_sdnf = []
+    for i in range(len(sdnf) - 1):
+        for j in range(i + 1, len(sdnf)):
+            intersection = list(filter(lambda x: x in sdnf[j], sdnf[i]))
+            if len(intersection) >= len(sdnf[0]) - 1:
+                intersection_sdnf.append(intersection)
+    return intersection_sdnf
+
+
+def find_difference_in_lists(list_1, list_2):
+    difference = list(filter(lambda x: x not in list_2, list_1))
+    return difference.copy()
+
+
+def compare_lists(arr1, arr2):
+    count = 0
+    for i in range(len(arr2)):
+        if arr1[i] == arr2[i]:
+            count += 1
+    ans = count == len(arr2)
+    return ans
+
+
+def check_if_list_include_list(chosen_list, checked_list):
+    for arr in chosen_list:
+        if compare_lists(arr, checked_list):
+            return True
+    return False
+
+
+def minimization_mc_clasky_sec_term_get_solution(intersect):
+    term = []
+    for i in range(len(intersect)):
+        for j in range(i + 1, len(intersect)):
+            if intersect[i][0] == intersect[j][0]:
+                if intersect[i][1][0] == '!':
+                    if intersect[i][1].find(intersect[j][1]) != -1:
+                        term.extend(sdnf_intersect([intersect[i], intersect[j]]))
+                else:
+                    if intersect[j][1].find(intersect[i][1]) != -1:
+                        term.extend(sdnf_intersect([intersect[i], intersect[j]]))
+            elif intersect[i][1] == intersect[j][1]:
+                if intersect[i][0][0] == '!':
+                    if intersect[i][0].find(intersect[j][0]) != -1:
+                        term.extend(sdnf_intersect([intersect[i], intersect[j]]))
+                else:
+                    if intersect[j][0].find(intersect[i][0]) != -1:
+                        term.extend(sdnf_intersect([intersect[i], intersect[j]]))
+    res = []
+    for i in range(len(term)):
+        if not check_if_list_include_list(res, term[i]):
+            res.append(term[i])
+    return res
+
+
+def implicants_in_sdnf_check(sdnf, copied_sdnf, sknf=False):
+    substits = []
+    reduced_implicts = minimization_mc_clasky_sec_term_get_solution(sdnf)
+
+    if len(reduced_implicts) != 0:
+        sdnf = reduced_implicts
+
+    for imps in sdnf:
+        substitute = {}
+        for i in range(len(imps)):
+            if imps[i][0] == '!':
+                substitute[imps[i][1:]] = 0
             else:
-                count += 1
-                if count > 1:
-                    return False
-        return True
+                substitute[imps[i]] = 1
+        substits.append(substitute)
 
-    def __check(self, index, result, reduce_parts, single_parts):
-        """Формируется маленький терм"""
-        same = False
-        for i in range(len(reduce_parts)):
-            if self.__compare_two_terms(reduce_parts[index], reduce_parts[i]) and index != i:
-                small_term = []
-                for variable in reduce_parts[index]:
-                    if variable in reduce_parts[i]:
-                        small_term.append(variable)
-                    else:
-                        small_term.append('-')
-                if self.__get_vars_count(small_term) == self.__get_vars_count(reduce_parts[index]) - 1:
-                    if not self.__find_rasch_results(result, small_term):
-                        result.append(small_term)
-                    same = True
-        if not same and not self.__find_rasch_results(single_parts, reduce_parts[index]):
-            single_parts.append(reduce_parts[index])
+    answer = implicants_reduction_get(sdnf, substits)
+    build_implicants = []
+    indexes = []
+    variables = set()
 
-    @staticmethod
-    def __include_check(small_term, full_terms):
-        for i in range(len(full_terms)):
-            if small_term[i] != full_terms[i] and small_term[i] != '-':
-                return False
-        return True
+    for i in range(len(sdnf)):
+        if answer[i]:
+            build_implicants.append(sdnf[i])
+            continue
+        indexes.append(i)
 
-    @staticmethod
-    def __get_vars_count(term):
-        """Подсчет количества переменных"""
-        sch = 0
-        for variable in term:
-            if variable != "-":
-                sch += 1
-        return sch
-
-    def __get_small_terms(self, sdnf_sknf):
-        sdnf_sknf = list(map(lambda x: x[:], sdnf_sknf))
-        single_parts = []
-        while self.__get_vars_count(sdnf_sknf[0]) > 1:
-            # Здесь проходим все время по sdnf_sknf до того момента, пока не сократим до самого конца
-            reduced_elements = []
-            for i in range(len(sdnf_sknf)):
-                self.__check(i, reduced_elements, sdnf_sknf, single_parts)
-            sdnf_sknf = reduced_elements
-            if len(reduced_elements) == 0:
-                break
-
-        small_terms = []
-        for i in range(len(sdnf_sknf)):
-            if not self.__find_rasch_results(small_terms, sdnf_sknf[i]):
-                small_terms.append(sdnf_sknf[i])
-        for i in range(len(single_parts)):
-            small_terms.append(single_parts[i])
-        return small_terms
-
-    def __get_resolve_table(self, sdnf_or_sknf):
-
-        mcklasky_table = []
-        small_terms = self.__get_small_terms(sdnf_or_sknf)
-        full_terms = list(map(lambda x: x[:], sdnf_or_sknf))
-        for i in small_terms:
-            small_term_in_full_term = []
-            for j in full_terms:
-                small_term_in_full_term.append(self.__include_check(i, j))
-            mcklasky_table.append(small_term_in_full_term)
-        return mcklasky_table
-
-    @staticmethod
-    def similarity_check(res, sdnf_func_part):
-        if not res:
-            return False
-        for i in range(len(res)):
-            flag = True
-            for j in range(len(res[i])):
-                if res[i][j] != sdnf_func_part[j]:
-                    flag = False
-            if flag:
-                return True
-        return False
-
-    @staticmethod
-    def compare_two_terms(term_1, term_2):
-        count = 0
-        for i in range(len(term_1)):
-            if term_1[i] == term_2[i]:
-                pass
-            elif not (term_1[i] in term_2[i] or term_2[i] in term_1[i]):
-                return False
+    for imps in build_implicants:
+        for variable in imps:
+            if variable[0] == '!':
+                variables.add(variable[1:])
             else:
-                count += 1
-                if count > 1:
-                    return False
-        return True
+                variables.add(variable)
+    if len(variables) != 3:
+        if len(indexes) != 0:
+            build_implicants.append(copied_sdnf[indexes[random.randint(0, len(indexes))]])
+    else:
+        if len(reduced_implicts) != 0:
+            build_implicants = reduced_implicts
 
-    def check(self, index, result, reduce_parts, single_parts):
-        """Формируется маленький терм"""
-        same = False
-        for i in range(len(reduce_parts)):
-            if self.compare_two_terms(reduce_parts[index], reduce_parts[i]) and index != i:
-                small_term = []
-                for variable in reduce_parts[index]:
-                    if variable in reduce_parts[i]:
-                        small_term.append(variable)
-                    else:
-                        small_term.append('-')
-                if self.get_vars_count(small_term) == self.get_vars_count(reduce_parts[index]) - 1:
-                    if not self.similarity_check(result, small_term):
-                        result.append(small_term)
-                    same = True
-        if not same and not self.similarity_check(single_parts, reduce_parts[index]):
-            single_parts.append(reduce_parts[index])
+    if len(sdnf) == 1 and len(copied_sdnf) > len(sdnf):
+        build_implicants.append(copied_sdnf[1])
 
-    @staticmethod
-    def get_vars_count(term):
-        """Подсчет количества переменных"""
-        sch = 0
-        for variable in term:
-            if variable != "-":
-                sch += 1
-        return sch
-
-    def get_small_terms(self, sdnf_sknf):
-        sdnf_sknf = list(map(lambda x: x[:], sdnf_sknf))
-        single_parts = []
-        while self.get_vars_count(sdnf_sknf[0]) > 1:
-            # Здесь проходим все время по sdnf_sknf до того момента, пока не сократим до самого конца
-            reduced_elements = []
-            for i in range(len(sdnf_sknf)):
-                self.check(i, reduced_elements, sdnf_sknf, single_parts)
-            sdnf_sknf = reduced_elements
-            if len(reduced_elements) == 0:
-                break
-
-        small_terms = []
-        for i in range(len(sdnf_sknf)):
-            if not self.similarity_check(small_terms, sdnf_sknf[i]):
-                small_terms.append(sdnf_sknf[i])
-        for i in range(len(single_parts)):
-            small_terms.append(single_parts[i])
-        return small_terms
-
-    def generate_covered_terms(self, terms):
-        covered_terms = set()
-        num_vars = len(terms[0])
-        for term in terms:
-            for i in range(num_vars):
-                if term[i] != '-':
-                    new_term = term.copy()
-                    new_term[i] = '-'
-                    covered_terms.add(tuple(new_term))
-        return covered_terms
-
-    def find_dead_ends(self, terms):
-        dead_ends = set()
-        covered_terms = self.generate_covered_terms(terms)
-
-        for term in terms:
-            if tuple(term) not in covered_terms:
-                dead_ends.add(tuple(term))
-
-        return dead_ends
+    show_res_by_rasch_method(build_implicants, sdnf, sknf)
 
 
-    @staticmethod
-    def __ged_minimized_terms(terms):
-        minimized_terms = []
-        for term in terms:
-            if term not in minimized_terms:
-                minimized_terms.append(term)
-        return minimized_terms
+def show_res_by_rasch_method(builded_imps, imps, sknf=False):
+    str_res = ""
+    if not sknf:
+        if builded_imps:
+            for i in range(len(builded_imps)):
+                for j in range(len(builded_imps[i])):
+                    str_res += builded_imps[i][j]
+                    if j != len(builded_imps[i]) - 1:
+                        str_res += "*"
+                if i != len(builded_imps) - 1:
+                    str_res += " + "
+        else:
+            for i in range(len(imps)):
+                for j in range(len(imps[i])):
+                    str_res += imps[i][j]
+                    if j != len(imps[i]) - 1:
+                        str_res += "*"
+                if i != len(imps) - 1:
+                    str_res += " + "
+    else:
+        if builded_imps:
+            for i in range(len(builded_imps)):
+                str_res += '('
+                for j in range(len(builded_imps[i])):
+                    str_res += builded_imps[i][j]
+                    if j != len(builded_imps[i]) - 1:
+                        str_res += "+"
+                str_res += ')'
+                if i != len(builded_imps) - 1:
+                    str_res += " * "
+        else:
+            for i in range(len(imps)):
+                str_res += '('
+                for j in range(len(imps[i])):
+                    str_res += imps[i][j]
+                    if j != len(imps[i]) - 1:
+                        str_res += "+"
+                str_res += ')'
+                if i != len(imps) - 1:
+                    str_res += " * "
 
-    def compare_and_build_minimized_terms(self, terms):
-        self.min_terms_names_for = []
-        try:
-            for term in terms:
-                for j in term:
-                    if j == '-':
-                        self.min_terms_names_for.append(term)
-                    else:
+    print(str_res)
+
+
+def get_keys_obj(list_of):
+    res_obj = {}
+    for i in range(len(list_of)):
+        for j in range(len(list_of[i])):
+            if isinstance(list_of[i][j], str):
+                if list_of[i][j][0] == '!':
+                    res_obj[list_of[i][j][1:]] = 0
+                else:
+                    res_obj[list_of[i][j]] = 0
+    return res_obj
+
+
+def implicants_reduction_get(implics, substs):
+    res = []
+    for i in range(len(implics)):
+        row = []
+        for j in range(len(implics)):
+            if i == j:
+                continue
+            implicant = []
+            for k in range(len(implics[j])):
+                keys = list(substs[i].keys())
+                for l in range(len(keys)):
+                    if k != l:
                         continue
+                    if implics[j][k][0] == '!':
+                        if implics[j][k][1:] in keys:
+                            implicant.append(int(not substs[i][implics[j][k][1:]]))
+                        else:
+                            implicant.append(implics[j][k])
+                    else:
+                        if implics[j][k] in keys:
+                            implicant.append(substs[i][implics[j][k]])
+                        else:
+                            implicant.append(implics[j][k])
+            row.append(implicant)
+        res.append(row)
 
-        except:
-            return
+    for row in res:
+        for i in range(len(row)):
+            if 0 in row[i]:
+                row.pop(i)
+                break
 
-    def get_sdnf_answer(self, sdnf):
-        terms = self.solution(sdnf)
-        answer = ""
-        for i in range(len(terms)):
-            part = ""
-            for j in range(len(terms[i])):
-                part = '*'.join(filter(lambda el: el != '-', terms[i][j]))
-            answer += part
-            if i != len(terms) - 1:
-                answer += " + "
-        return answer
+    row_res = []
+    for i in range(len(res)):
+        obj = get_keys_obj(res[i])
+        for j in range(len(res[i])):
+            for el in res[i][j]:
+                if isinstance(el, str):
+                    if el[0] == '!':
+                        obj[el[1:]] -= 1
+                    else:
+                        obj[el] += 1
+        row_res.append(obj)
 
-    def get_sknf_answer(self, sknf):
-        terms = self.solution(sknf)
-        answer = ""
-        for i in range(len(terms)):
-            result = "("
-            part = ""
-            for j in range(len(terms[i])):
-                part = '+'.join(filter(lambda el: el != '-', terms[i][j]))
-            result += part
-            result += ")"
-            answer += result
-            if i != len(terms) - 1:
-                answer += " * "
-        return answer
+    inds = []
+    res = []
+    for i in range(len(row_res)):
+        keys = list(row_res[i].keys())
+        count = 0
+        for j in range(len(keys)):
+            count += row_res[i][keys[j]]
+        if count == 0:
+            res.append(False)
+            inds.append(i)
+        else:
+            res.append(True)
 
-    def get_result_by_rashch_method(self, table, final_terms, list_of_small_terms):
-        for i in range(len(table[0])):
-            truth_count = 0
-            index_of_truth = 0
-            for j in range(len(table)):
-                if table[j][i]:
-                    truth_count += 1
-                    index_of_truth = j
-            if truth_count == 1 and not self.__find_rasch_results(final_terms, list_of_small_terms[index_of_truth]):
-                final_terms.append([list_of_small_terms[index_of_truth]])
-        return self.__ged_minimized_terms(final_terms)
-
-    def prepearing(self, sdnf_sknf):
-        final_terms = []
-        small_terms = self.get_small_terms(sdnf_sknf)
-        table = self.__get_resolve_table(sdnf_sknf)
-        list_of_small_terms = self.__get_small_terms(sdnf_sknf)
-        return small_terms, table, final_terms, list_of_small_terms
-
-    def solution(self, sdnf_sknf):
-
-        small_terms, table, final_terms, list_of_small_terms = self.prepearing(sdnf_sknf)
-        self.find_dead_ends(small_terms)
-        self.generate_covered_terms(small_terms)
-        return self.get_result_by_rashch_method(table, final_terms, list_of_small_terms)
+    return res
 
 
-# a = RaschMethod()
-# sdnf = a.solution([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
-# print(sdnf)
-# c = a.get_sdnf_answer([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
-# print('sDNF:', c)
-# d = a.get_sknf_answer([['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
-# print('sKNF: ', d)
+def minimizetion_by_rasch_method(sdnf, sknf):
+    sdnf_inters = sdnf_intersect(sdnf)
+    sdnf_copy = sdnf_inters[:]
+    if len(sdnf_inters) == 1:
+        for i in range(len(sdnf)):
+            if len(find_difference_in_lists(sdnf[i], sdnf_inters[0])) == len(sdnf[i]):
+                sdnf_copy.append(sdnf[i])
+    implicants_in_sdnf_check(sdnf_inters, sdnf_copy)
+
+    sknf_inters = sdnf_intersect(sknf)
+    sknf_copy = sknf_inters[:]
+    if len(sknf_inters) == 1:
+        for i in range(len(sknf)):
+            if len(find_difference_in_lists(sknf[i], sknf_inters[0])) == len(sknf[i]):
+                sknf_copy.append(sknf[i])
+    implicants_in_sdnf_check(sknf_inters, sknf_copy, True)
