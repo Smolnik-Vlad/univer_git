@@ -1,6 +1,7 @@
-from sdnf_sknf import decode_formula, get_stacks_of_signs_and_variables, solution
+from mc_clusky_method import McCluskyMethod
+from sdnf_sknf import decode_formula, get_stacks_of_signs_and_variables, solution, show_sdnf_form, show_sknf_form
 
-table = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
+table = [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0],  [1, 0, 1], [1, 1, 0], [1, 1, 1]]
 
 
 def get_from_k_map_res(ans, k_map):
@@ -173,10 +174,21 @@ def ger_result_from_rasch_method(builded_implicants, implicants, sknf=False):
                 if i != len(implicants) - 1:
                     result += " * "
 
-    print(result)
+    # print(result)
 
+def get_result(table, answers, stack_variables):
+    sdnf = show_sdnf_form(table, answers, stack_variables)
+    sknf = show_sknf_form(table, answers, stack_variables)
+    a = McCluskyMethod()
+    # sdnf = a.solution(sdnf)
 
-def karnaugh_map(answers, variables):
+    c = a.get_sdnf_answer(sdnf)
+    print('sDNF:', c)
+    c = a.get_sknf_answer(sknf)
+
+    print('sKNF: ', c)
+
+def karnaugh_map(answers, variables, table, answer, stack_variable):
     carno_map = [[], []]
     carno_map[1].extend([0, 1, 3, 2])
     carno_map[0].extend([4, 5, 7, 6])
@@ -199,6 +211,8 @@ def karnaugh_map(answers, variables):
     ger_result_from_rasch_method(minimal_answer_sdnf, impl_sdnf)
     ger_result_from_rasch_method(minimal_answer_sdnf, imp_sknf, True)
 
+    get_result(table, answers, stack_variable)
+
 
 # karnaugh_map(answers, variables)
 
@@ -208,6 +222,8 @@ def carnaugh_method(formula):
     stack_variables, stac_signs = get_stacks_of_signs_and_variables(decoded_formula)
 
     answers = solution(decoded_formula, stac_signs, stack_variables, table)
-    print(answers)
 
-    karnaugh_map(answers, stack_variables)
+
+
+
+    karnaugh_map(answers, stack_variables, table, answers, stack_variables)

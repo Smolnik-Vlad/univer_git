@@ -1,7 +1,7 @@
 operations_priority = {'!': 6, '*': 5, '+': 4, '~': 3, '->': 2, }
 
 
-def decode_formula(current_formula: str) -> list:
+def decode_formula(current_formula = '(((!x1)+(!x2*x3))->((x1~(!x3))))') -> list:
     """
     Позволяет собрать "- >" в один элемент списка и так же делает переменные x123 как один элемент списка
     """
@@ -133,7 +133,7 @@ def show_sdnf_form(table, answers, variables):
             answer += ") +"
             sdnf.append(row)
     answer = answer[:-2]
-    print(f'SDNF Form: {answer}')
+    # print(f'SDNF Form: {answer}')
     return sdnf
 
 def show_sknf_form(table, answers, variables):
@@ -157,7 +157,7 @@ def show_sknf_form(table, answers, variables):
             answer += ") * "
             sknf.append(row)
     answer = answer[:-2]
-    print(f'SKNF Form: {answer}')
+    # print(f'SKNF Form: {answer}')
     return sknf
 
 def sdnf_sknf_num_form(answers):

@@ -16,6 +16,7 @@ carnaugh_formula = '(!((x1+x2)*x3))'
 
 def main_funct():
     a = McCluskyMethod()
+    print('mc_clusky_method')
     c = a.get_sdnf_answer([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
     print('sDNF:', c)
     d = a.get_sknf_answer([['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
@@ -24,9 +25,7 @@ def main_funct():
     print('rasch_method')
     minimizetion_by_rasch_method([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']],
                                  [['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
-    # print('sDNF:', c)
-    # d = a.get_sknf_answer([['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
-    # print('sKNF: ', d)
+
     print('________________________________________________________________')
     print('carnaugh_method')
     carnaugh_method(formula=carnaugh_formula)

@@ -1,5 +1,7 @@
 import random
 
+from mc_clusky_method import McCluskyMethod
+
 
 def sdnf_intersect(sdnf):
     intersection_sdnf = []
@@ -57,7 +59,9 @@ def minimization_mc_clasky_sec_term_get_solution(intersect):
     return res
 
 
-def implicants_in_sdnf_check(sdnf, copied_sdnf, sknf=False):
+def implicants_in_sdnf_check(sdnf, sknf, copied_sdnf, sknf_flag=False):
+    sdnf_1 = sdnf.copy()
+    sknf_1 = sknf.copy()
     substits = []
     reduced_implicts = minimization_mc_clasky_sec_term_get_solution(sdnf)
 
@@ -100,8 +104,13 @@ def implicants_in_sdnf_check(sdnf, copied_sdnf, sknf=False):
     if len(sdnf) == 1 and len(copied_sdnf) > len(sdnf):
         build_implicants.append(copied_sdnf[1])
 
-    show_res_by_rasch_method(build_implicants, sdnf, sknf)
+    # show_res_by_rasch_method(build_implicants, sdnf, sknf)
+    get_res(sdnf_1, sknf_1)
 
+
+def solve():
+    a = McCluskyMethod()
+    return a
 
 def show_res_by_rasch_method(builded_imps, imps, sknf=False):
     str_res = ""
@@ -144,7 +153,7 @@ def show_res_by_rasch_method(builded_imps, imps, sknf=False):
                 if i != len(imps) - 1:
                     str_res += " * "
 
-    print(str_res)
+    # print(str_res)
 
 
 def get_keys_obj(list_of):
@@ -157,6 +166,14 @@ def get_keys_obj(list_of):
                 else:
                     res_obj[list_of[i][j]] = 0
     return res_obj
+
+def get_res(sdnf, sknf):
+    a = solve()
+    sdnf = a.get_sdnf_answer(sdnf)
+    sknf = a.get_sknf_answer(sknf)
+    print(f'sDNF: {sdnf}')
+    print(f'sKNF: {sknf}')
+
 
 
 def implicants_reduction_get(implics, substs):
@@ -226,7 +243,7 @@ def minimizetion_by_rasch_method(sdnf, sknf):
         for i in range(len(sdnf)):
             if len(find_difference_in_lists(sdnf[i], sdnf_inters[0])) == len(sdnf[i]):
                 sdnf_copy.append(sdnf[i])
-    implicants_in_sdnf_check(sdnf_inters, sdnf_copy)
+    implicants_in_sdnf_check(sdnf_inters, sknf, sdnf_copy)
 
     sknf_inters = sdnf_intersect(sknf)
     sknf_copy = sknf_inters[:]
@@ -234,4 +251,6 @@ def minimizetion_by_rasch_method(sdnf, sknf):
         for i in range(len(sknf)):
             if len(find_difference_in_lists(sknf[i], sknf_inters[0])) == len(sknf[i]):
                 sknf_copy.append(sknf[i])
-    implicants_in_sdnf_check(sknf_inters, sknf_copy, True)
+
+
+    implicants_in_sdnf_check(sdnf, sknf, True)
