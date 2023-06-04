@@ -17,8 +17,7 @@ def check_of_two_power(a):
     return (a & (a - 1)) == 0
 
 
-def get_suitable_groups_from_kmap(k_map, compare=1):
-    current_groups = []
+def gsgfk1(k_map, compare, current_groups):
     for i in range(len(k_map)):
         for j in range(len(k_map[i])):
             if k_map[i][j] == compare:
@@ -36,6 +35,11 @@ def get_suitable_groups_from_kmap(k_map, compare=1):
                     k += 1
                     if k > 1:
                         break
+
+def get_suitable_groups_from_kmap(k_map, compare=1):
+    current_groups = []
+
+    gsgfk1(k_map, compare, current_groups)
     # find squares
     for j in range(len(k_map[0])):
         if k_map[0][j] == compare and k_map[1][j] == compare:
@@ -70,12 +74,7 @@ def sorting_arr_length_arrs(ansvers):
                 ansvers[i], ansvers[j] = ansvers[j], ansvers[i]
 
 
-def comparing_variables_and_groups(groups, variables_vertical_groups, variables_horisontal_groups, variables,
-                                   sknf=False):
-    vertical = [variables[0]]  # x1
-    horizontal = [variables[1], variables[2]]  # x2 x3
-    variable_ans = []
-
+def cvag(groups, variables_vertical_groups, variables_horisontal_groups, variable_ans, horizontal):
     for group in groups:
         if len(group['row']) == 1:
             variable = '!x1' if not variables_vertical_groups[group['row'][0]] else 'x1'
@@ -106,9 +105,7 @@ def comparing_variables_and_groups(groups, variables_vertical_groups, variables_
                                 horizontal[i])
                 variable_ans.append(vars)
 
-    ans_variables_and_so = set()
-    sorting_arr_length_arrs(variable_ans)
-    unused_answer = variable_ans.copy()
+def cvag_2(sknf, unused_answer, ans_variables_and_so, variable_ans, minimal_answer):
     if sknf:
         for i in range(len(unused_answer)):
             for j in range(len(unused_answer[i])):
@@ -118,7 +115,7 @@ def comparing_variables_and_groups(groups, variables_vertical_groups, variables_
                     unused_answer[i][j] = f"!{unused_answer[i][j]}"
 
     k = 0
-    minimal_answer = []
+
     while len(ans_variables_and_so) != 3 and k < len(variable_ans):
         size_start = len(ans_variables_and_so)
         for j in range(len(variable_ans[k])):
@@ -130,49 +127,72 @@ def comparing_variables_and_groups(groups, variables_vertical_groups, variables_
             minimal_answer.append(variable_ans[k])
         k += 1
 
+def comparing_variables_and_groups(groups, variables_vertical_groups, variables_horisontal_groups, variables,
+                                   sknf=False):
+    vertical = [variables[0]]  # x1
+    horizontal = [variables[1], variables[2]]  # x2 x3
+    variable_ans = []
+
+    cvag(groups, variables_vertical_groups, variables_horisontal_groups, variable_ans, horizontal)
+
+
+
+    ans_variables_and_so = set()
+    sorting_arr_length_arrs(variable_ans)
+    unused_answer = variable_ans.copy()
+    minimal_answer = []
+
+
     return {'unused_answer': unused_answer, 'minimal_answer': minimal_answer}
 
 
-def ger_result_from_rasch_method(builded_implicants, implicants, sknf=False):
-    result = ""
-    if not sknf:
-        if len(builded_implicants) > 0:
-            for i in range(len(builded_implicants)):
-                for j in range(len(builded_implicants[i])):
-                    result += builded_implicants[i][j]
-                    if j != len(builded_implicants[i]) - 1:
-                        result += "*"
-                if i != len(builded_implicants) - 1:
-                    result += " + "
-        else:
-            for i in range(len(implicants)):
-                for j in range(len(implicants[i])):
-                    result += implicants[i][j]
-                    if j != len(implicants[i]) - 1:
-                        result += "*"
-                if i != len(implicants) - 1:
-                    result += " + "
+def show_rasch_sdnf(builded_imps, str_res, imps):
+    if builded_imps:
+        for i in range(len(builded_imps)):
+            for j in range(len(builded_imps[i])):
+                str_res += builded_imps[i][j]
+                if j != len(builded_imps[i]) - 1:
+                    str_res += "*"
+            if i != len(builded_imps) - 1:
+                str_res += " + "
     else:
-        if len(builded_implicants) > 0:
-            for i in range(len(builded_implicants)):
-                result += '('
-                for j in range(len(builded_implicants[i])):
-                    result += builded_implicants[i][j]
-                    if j != len(builded_implicants[i]) - 1:
-                        result += "+"
-                result += ')'
-                if i != len(builded_implicants) - 1:
-                    result += " * "
-        else:
-            for i in range(len(implicants)):
-                result += '('
-                for j in range(len(implicants[i])):
-                    result += implicants[i][j]
-                    if j != len(implicants[i]) - 1:
-                        result += "+"
-                result += ')'
-                if i != len(implicants) - 1:
-                    result += " * "
+        for i in range(len(imps)):
+            for j in range(len(imps[i])):
+                str_res += imps[i][j]
+                if j != len(imps[i]) - 1:
+                    str_res += "*"
+            if i != len(imps) - 1:
+                str_res += " + "
+
+def show_rasch_sknf(builded_imps, str_res, imps):
+    if builded_imps:
+        for i in range(len(builded_imps)):
+            str_res += '('
+            for j in range(len(builded_imps[i])):
+                str_res += builded_imps[i][j]
+                if j != len(builded_imps[i]) - 1:
+                    str_res += "+"
+            str_res += ')'
+            if i != len(builded_imps) - 1:
+                str_res += " * "
+    else:
+        for i in range(len(imps)):
+            str_res += '('
+            for j in range(len(imps[i])):
+                str_res += imps[i][j]
+                if j != len(imps[i]) - 1:
+                    str_res += "+"
+            str_res += ')'
+            if i != len(imps) - 1:
+                str_res += " * "
+
+def show_res_by_rasch_method(builded_imps, imps, sknf=False):
+    str_res = ""
+    if not sknf:
+        show_rasch_sdnf(builded_imps, str_res, imps)
+
+    else:
+        show_rasch_sknf(builded_imps, str_res, imps)
 
     # print(result)
 
@@ -208,8 +228,8 @@ def karnaugh_map(answers, variables, table, answer, stack_variable):
     imp_sknf = sknf_obj["unused_answer"]
     minimal_answer_sdnf = sknf_obj["minimal_answer"]
 
-    ger_result_from_rasch_method(minimal_answer_sdnf, impl_sdnf)
-    ger_result_from_rasch_method(minimal_answer_sdnf, imp_sknf, True)
+    show_res_by_rasch_method(minimal_answer_sdnf, impl_sdnf)
+    show_res_by_rasch_method(minimal_answer_sdnf, imp_sknf, True)
 
     get_result(table, answers, stack_variable)
 
