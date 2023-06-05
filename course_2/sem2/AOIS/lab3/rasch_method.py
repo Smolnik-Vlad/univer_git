@@ -1,4 +1,5 @@
 import random
+from typing import List
 
 from mc_clusky_method import McCluskyMethod
 
@@ -112,46 +113,55 @@ def solve():
     a = McCluskyMethod()
     return a
 
+
+def show_rasch_sdnf(builded_imps, str_res, imps):
+    if builded_imps:
+        for i in range(len(builded_imps)):
+            for j in range(len(builded_imps[i])):
+                str_res += builded_imps[i][j]
+                if j != len(builded_imps[i]) - 1:
+                    str_res += "*"
+            if i != len(builded_imps) - 1:
+                str_res += " + "
+    else:
+        for i in range(len(imps)):
+            for j in range(len(imps[i])):
+                str_res += imps[i][j]
+                if j != len(imps[i]) - 1:
+                    str_res += "*"
+            if i != len(imps) - 1:
+                str_res += " + "
+
+def show_rasch_sknf(builded_imps, str_res, imps):
+    if builded_imps:
+        for i in range(len(builded_imps)):
+            str_res += '('
+            for j in range(len(builded_imps[i])):
+                str_res += builded_imps[i][j]
+                if j != len(builded_imps[i]) - 1:
+                    str_res += "+"
+            str_res += ')'
+            if i != len(builded_imps) - 1:
+                str_res += " * "
+    else:
+        for i in range(len(imps)):
+            str_res += '('
+            for j in range(len(imps[i])):
+                str_res += imps[i][j]
+                if j != len(imps[i]) - 1:
+                    str_res += "+"
+            str_res += ')'
+            if i != len(imps) - 1:
+                str_res += " * "
+
 def show_res_by_rasch_method(builded_imps, imps, sknf=False):
     str_res = ""
     if not sknf:
-        if builded_imps:
-            for i in range(len(builded_imps)):
-                for j in range(len(builded_imps[i])):
-                    str_res += builded_imps[i][j]
-                    if j != len(builded_imps[i]) - 1:
-                        str_res += "*"
-                if i != len(builded_imps) - 1:
-                    str_res += " + "
-        else:
-            for i in range(len(imps)):
-                for j in range(len(imps[i])):
-                    str_res += imps[i][j]
-                    if j != len(imps[i]) - 1:
-                        str_res += "*"
-                if i != len(imps) - 1:
-                    str_res += " + "
+        show_rasch_sdnf(builded_imps, str_res, imps)
+
     else:
-        if builded_imps:
-            for i in range(len(builded_imps)):
-                str_res += '('
-                for j in range(len(builded_imps[i])):
-                    str_res += builded_imps[i][j]
-                    if j != len(builded_imps[i]) - 1:
-                        str_res += "+"
-                str_res += ')'
-                if i != len(builded_imps) - 1:
-                    str_res += " * "
-        else:
-            for i in range(len(imps)):
-                str_res += '('
-                for j in range(len(imps[i])):
-                    str_res += imps[i][j]
-                    if j != len(imps[i]) - 1:
-                        str_res += "+"
-                str_res += ')'
-                if i != len(imps) - 1:
-                    str_res += " * "
+        show_rasch_sknf(builded_imps, str_res, imps)
+
 
     # print(str_res)
 
@@ -175,9 +185,7 @@ def get_res(sdnf, sknf):
     print(f'sKNF: {sknf}')
 
 
-
-def implicants_reduction_get(implics, substs):
-    res = []
+def imp_red_get_1(res, implics, substs):
     for i in range(len(implics)):
         row = []
         for j in range(len(implics)):
@@ -202,12 +210,8 @@ def implicants_reduction_get(implics, substs):
             row.append(implicant)
         res.append(row)
 
-    for row in res:
-        for i in range(len(row)):
-            if 0 in row[i]:
-                row.pop(i)
-                break
 
+def imp_red_get_2(res):
     row_res = []
     for i in range(len(res)):
         obj = get_keys_obj(res[i])
@@ -233,6 +237,16 @@ def implicants_reduction_get(implics, substs):
         else:
             res.append(True)
 
+def implicants_reduction_get(implics, substs):
+    res: List[list] = []
+    imp_red_get_1(res, implics, substs)
+
+    for row in res:
+        for i in range(len(row)):
+            if 0 in row[i]:
+                row.pop(i)
+                break
+    imp_red_get_2(res)
     return res
 
 
