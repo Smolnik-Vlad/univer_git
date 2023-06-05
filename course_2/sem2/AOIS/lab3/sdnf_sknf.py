@@ -2,9 +2,7 @@ operations_priority = {'!': 6, '*': 5, '+': 4, '~': 3, '->': 2, }
 
 
 def decode_formula(current_formula = '(((!x1)+(!x2*x3))->((x1~(!x3))))') -> list:
-    """
-    Позволяет собрать "- >" в один элемент списка и так же делает переменные x123 как один элемент списка
-    """
+
     arr = list(current_formula)
     i = 0
     while i < len(arr):

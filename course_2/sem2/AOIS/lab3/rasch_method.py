@@ -60,7 +60,7 @@ def minimization_mc_clasky_sec_term_get_solution(intersect):
     return res
 
 
-def implicants_in_sdnf_check(sdnf, sknf, copied_sdnf, sknf_flag=False):
+def implicants_in_sdnf_check(sdnf, sknf, copied_sdnf):
     sdnf_1 = sdnf.copy()
     sknf_1 = sknf.copy()
     substits = []
@@ -132,6 +132,7 @@ def show_rasch_sdnf(builded_imps, str_res, imps):
             if i != len(imps) - 1:
                 str_res += " + "
 
+
 def show_rasch_sknf(builded_imps, str_res, imps):
     if builded_imps:
         for i in range(len(builded_imps)):
@@ -154,6 +155,7 @@ def show_rasch_sknf(builded_imps, str_res, imps):
             if i != len(imps) - 1:
                 str_res += " * "
 
+
 def show_res_by_rasch_method(builded_imps, imps, sknf=False):
     str_res = ""
     if not sknf:
@@ -161,7 +163,6 @@ def show_res_by_rasch_method(builded_imps, imps, sknf=False):
 
     else:
         show_rasch_sknf(builded_imps, str_res, imps)
-
 
     # print(str_res)
 
@@ -176,6 +177,7 @@ def get_keys_obj(list_of):
                 else:
                     res_obj[list_of[i][j]] = 0
     return res_obj
+
 
 def get_res(sdnf, sknf):
     a = solve()
@@ -237,6 +239,7 @@ def imp_red_get_2(res):
         else:
             res.append(True)
 
+
 def implicants_reduction_get(implics, substs):
     res: List[list] = []
     imp_red_get_1(res, implics, substs)
@@ -265,6 +268,5 @@ def minimizetion_by_rasch_method(sdnf, sknf):
         for i in range(len(sknf)):
             if len(find_difference_in_lists(sknf[i], sknf_inters[0])) == len(sknf[i]):
                 sknf_copy.append(sknf[i])
-
 
     implicants_in_sdnf_check(sdnf, sknf, True)

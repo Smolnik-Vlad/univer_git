@@ -4,7 +4,6 @@ class McCluskyMethod:
         sdnf_sknf = list(map(lambda x: x[:], sdnf_sknf))
         single_parts = []
         while self.__get_vars_count(sdnf_sknf[0]) > 1:
-            #Здесь проходим все время по sdnf_sknf до того момента, пока не сократим до самого конца
             reduced_elements = []
             for i in range(len(sdnf_sknf)):
                 self.__check(i, reduced_elements, sdnf_sknf, single_parts)
@@ -146,14 +145,3 @@ class McCluskyMethod:
             if i != len(terms) - 1:
                 answer += " * "
         return answer
-
-
-# a = McCluskyMethod()
-# sdnf = a.solution([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
-# print(sdnf)
-# c = a.get_sdnf_answer([['!x1', '!x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', 'x2', 'x3'], ['x1', 'x2', '!x3']])
-# print('sDNF:', c)
-# d = a.get_sknf_answer([['x1', 'x2', 'x3'], ['!x1', 'x2', 'x3'], ['!x1', 'x2', '!x3'], ['!x1', '!x2', '!x3']])
-# print('sKNF: ', d)
-
-# print(sdnf)
